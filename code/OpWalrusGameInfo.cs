@@ -1,0 +1,40 @@
+﻿using System.Collections.Generic;
+
+namespace OpWalrus
+{
+	public static class OpWalrusGameInfo
+	{
+		public enum Team
+		{
+			Prisoners,
+			Guards
+		}
+
+		public enum Role
+		{
+			Warden,
+			Guard,
+			Prisoner
+		}
+
+		public static Dictionary<Role, Team> roleToTeam = new Dictionary<Role, Team>
+		{
+			{Role.Warden, Team.Guards },
+			{Role.Guard, Team.Guards },
+			{Role.Prisoner, Team.Prisoners }
+		};
+
+		public static Dictionary<Team, Role> teamToDefaultRole = new Dictionary<Team, Role>
+		{
+			{Team.Guards, Role.Guard },
+			{Team.Prisoners, Role.Prisoner }
+		};
+
+		public enum GameState
+		{
+			Pregame,
+			Playing,
+			PostGame
+		}
+	}
+}
