@@ -12,7 +12,7 @@ namespace OpWalrus
 	public partial class OpWalrusGame : Sandbox.Game
 	{
 		public float preGameLength = 2f;
-		public float gameLength = 30f;
+		public float gameLength = 2f;
 		public float postGameLength = 2f;
 		public float prisonerOverGuardRatio = 4f / 1f;
 
@@ -63,6 +63,7 @@ namespace OpWalrus
 
 			if (pawn is OpWalrusPlayer opwp)
 			{
+				opwp.Inventory.DeleteContents();
 				opwp.setSpectator( true );
 				spectators.Add( opwp );
 			}
@@ -137,7 +138,7 @@ namespace OpWalrus
 			}
 
 			int randIndex = Rand.Int( 0, spawnPositions.Count - 1 );
-			//Log.Info( randIndex );
+			//Log.Info( randIndex );c
 			player.Position = spawnPositions[randIndex];
 			player.Velocity = Vector3.Zero;
 		}
@@ -175,6 +176,7 @@ namespace OpWalrus
 		{
 			if ( Time.Now > postGameLength + lastGameStateChangeTime )
 			{
+				preparePostGame();
 				setGameState( OpWalrusGameInfo.GameState.Pregame );
 			}
 		}
@@ -326,6 +328,26 @@ namespace OpWalrus
 			}
 
 			return succeeded;
+		}
+
+		public void preparePostGame()
+		{
+			for(int i = 0; i < All.Count; i++ )
+			{
+				Log.Info( (All[i], All[i].EntityName, All[i].GetType()) );
+				if( All[i].GetType().IsSubclassOf(typeof(Weapon)) )
+				{
+					All[i].Delete();
+				}
+				else if(All[i] is EntDoor door )
+				{
+					FuncButton
+					new Output( door, "Close" ).Fire( this, 0.0f );
+					//door.FireOutput( "Toggle", this, null, 0f );
+					
+
+				}
+			}
 		}
 	}
 }

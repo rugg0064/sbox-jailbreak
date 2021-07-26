@@ -38,18 +38,7 @@ namespace OpWalrus
 
 			((OpWalrusGame)Game.Current).moveToRandomSpawnpoint( this );
 
-			if( this.Inventory != null )
-			{
-				Inventory.DeleteContents();
-			}
-
-			if (OpWalrusGameInfo.roleToTeam[this.role] == OpWalrusGameInfo.Team.Guards)
-			{
-				Log.Info( "Is a guard" );
-				Inventory.DeleteContents();
-				Pistol pistol;
-				Inventory.Add( pistol = new Pistol(), true );
-			}
+			Inventory.DeleteContents();
 		}
 
 		public void dressToTeam()
@@ -92,42 +81,35 @@ namespace OpWalrus
 
 			SimulateActiveChild( cl, ActiveChild );
 
-			TickPlayerUse();
-
-			if(Input.Down(InputButton.Flashlight))
+			//A jank check for if you are a spectator.
+			if(this.Controller is not NoclipController)
 			{
-				Pistol p = new Pistol();
-				p.Position = EyePos + EyeRot.Forward * 64;
-				p.Spawn();
-
-				Shotgun s = new Shotgun();
-				s.Position = EyePos + EyeRot.Forward * 64;
-				s.Spawn();
-			}
-			
-			if(Input.Pressed( InputButton.Drop ) )
-			{
-				int activeSlot;
-				if ( (activeSlot = Inventory.GetActiveSlot()) != -1 )
+				TickPlayerUse();
+				
+				if ( Input.Pressed( InputButton.Drop ) )
 				{
-					Entity activeEntity = Inventory.GetSlot( activeSlot );
-					activeEntity.Spawn();
-					activeEntity.Position = EyePos + EyeRot.Forward * 64;
+					int activeSlot;
+					if ( (activeSlot = Inventory.GetActiveSlot()) != -1 )
+					{
+						Entity activeEntity = Inventory.GetSlot( activeSlot );
+						activeEntity.Spawn();
+						activeEntity.Position = EyePos + EyeRot.Forward * 64;
 
-					Inventory.Drop( activeEntity );
-				}
-			}
-
-			if(Input.MouseWheel != 0 && Inventory.Count() != 0 )
-			{ 
-				int newSpot = Inventory.GetActiveSlot() + Math.Sign( Input.MouseWheel );
-
-				if(newSpot < -1)
-				{
-					newSpot = Inventory.Count() - 1;
+						Inventory.Drop( activeEntity );
+					}
 				}
 
-				Inventory.SetActiveSlot( newSpot, true );
+				if ( Input.MouseWheel != 0 && Inventory.Count() != 0 )
+				{
+					int newSpot = Inventory.GetActiveSlot() + Math.Sign( Input.MouseWheel );
+
+					if ( newSpot < -1 )
+					{
+						newSpot = Inventory.Count() - 1;
+					}
+
+					Inventory.SetActiveSlot( newSpot, true );
+				}
 			}
 		}
 
