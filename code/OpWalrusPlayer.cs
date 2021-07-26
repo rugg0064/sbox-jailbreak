@@ -93,6 +93,68 @@ namespace OpWalrus
 			SimulateActiveChild( cl, ActiveChild );
 
 			TickPlayerUse();
+
+			if(Input.Down(InputButton.Flashlight))
+			{
+				Pistol p = new Pistol();
+				p.Position = EyePos + EyeRot.Forward * 64;
+				p.Spawn();
+
+				Shotgun s = new Shotgun();
+				s.Position = EyePos + EyeRot.Forward * 64;
+				s.Spawn();
+			}
+			
+			if(Input.Pressed( InputButton.Drop ) )
+			{
+				int activeSlot;
+				if ( (activeSlot = Inventory.GetActiveSlot()) != -1 )
+				{
+					Entity activeEntity = Inventory.GetSlot( activeSlot );
+					activeEntity.Spawn();
+					activeEntity.Position = EyePos + EyeRot.Forward * 64;
+
+					Inventory.Drop( activeEntity );
+				}
+			}
+
+			if(Input.MouseWheel != 0 && Inventory.Count() != 0 )
+			{ 
+				int newSpot = Inventory.GetActiveSlot() + Math.Sign( Input.MouseWheel );
+
+				if(newSpot < -1)
+				{
+					newSpot = Inventory.Count() - 1;
+				}
+
+				Inventory.SetActiveSlot( newSpot, true );
+			}
+		}
+
+
+		//Both are inclusive bound
+		public static int wrapInBounds(int i, (int min, int max) bounds)
+		{
+			int newVal = i;
+			int range = 1 + bounds.max - bounds.min;
+
+			if(range == 0)
+			{
+				Log.Info( "wrapping to none" );
+				newVal = bounds.min;
+			}
+
+			while(newVal < bounds.min)
+			{
+				newVal += range;
+			}
+
+			while(newVal > bounds.max)
+			{
+				newVal -= range;
+			}
+
+			return newVal;
 		}
 
 		[ServerCmd]
