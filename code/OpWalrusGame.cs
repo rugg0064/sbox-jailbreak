@@ -341,11 +341,10 @@ namespace OpWalrus
 				}
 				else if(All[i] is EntDoor door )
 				{
-					FuncButton
-					new Output( door, "Close" ).Fire( this, 0.0f );
+					//door.Close( );
+					//FuncButton
+					//new Output( door, "Close" ).Fire( this, 0.0f );
 					//door.FireOutput( "Toggle", this, null, 0f );
-					
-
 				}
 			}
 		}
