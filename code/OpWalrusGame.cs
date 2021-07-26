@@ -12,7 +12,7 @@ namespace OpWalrus
 	public partial class OpWalrusGame : Sandbox.Game
 	{
 		public float preGameLength = 2f;
-		public float gameLength = 2f;
+		public float gameLength = 60f;
 		public float postGameLength = 2f;
 		public float prisonerOverGuardRatio = 4f / 1f;
 
