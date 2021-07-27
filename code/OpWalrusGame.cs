@@ -188,8 +188,28 @@ namespace OpWalrus
 			lastGameStateChangeTime = Time.Now;
 		}
 
+		public override bool CanHearPlayerVoice( Client source, Client dest )
+		{
+			Host.AssertServer();
 
-		[ServerCmd( "getTeam" )]
+			return source == dest;
+
+			if(source == dest)
+			{
+				return false;
+			}
+
+			bool returnVal = !spectators.Contains( (OpWalrusPlayer)source.Pawn );
+
+			for (int i = 0; i < spectators.Count; i++)
+			{
+				//Log.Info( spectators[i].GetClientOwner() );
+			}
+			//Log.Info( returnVal );
+			return returnVal;
+		}
+
+			[ServerCmd( "getTeam" )]
 		public static void getTeam( string playerName )
 		{
 			Log.Info( "Team of: " + playerName );
@@ -341,6 +361,7 @@ namespace OpWalrus
 				}
 				else if(All[i] is EntDoor door )
 				{
+
 					//door.Close( );
 					//FuncButton
 					//new Output( door, "Close" ).Fire( this, 0.0f );
