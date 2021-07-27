@@ -192,6 +192,8 @@ namespace OpWalrus
 		{
 			Host.AssertServer();
 
+			return true;
+
 			return source == dest;
 
 			if(source == dest)
