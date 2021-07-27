@@ -192,8 +192,12 @@ namespace OpWalrus
 		{
 			Host.AssertServer();
 
-			return true;
+			Log.Info( ((source, source.NetworkIdent, (OpWalrusPlayer)source.Pawn), (dest, dest.NetworkIdent, (OpWalrusPlayer)dest.Pawn)));
 
+
+
+			return true;
+			/*
 			return source == dest;
 
 			if(source == dest)
@@ -209,6 +213,7 @@ namespace OpWalrus
 			}
 			//Log.Info( returnVal );
 			return returnVal;
+			*/
 		}
 
 			[ServerCmd( "getTeam" )]
