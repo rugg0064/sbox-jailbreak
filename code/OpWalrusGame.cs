@@ -191,29 +191,7 @@ namespace OpWalrus
 		public override bool CanHearPlayerVoice( Client source, Client dest )
 		{
 			Host.AssertServer();
-
-			Log.Info( ((source, source.NetworkIdent, (OpWalrusPlayer)source.Pawn), (dest, dest.NetworkIdent, (OpWalrusPlayer)dest.Pawn)));
-
-
-
 			return true;
-			/*
-			return source == dest;
-
-			if(source == dest)
-			{
-				return false;
-			}
-
-			bool returnVal = !spectators.Contains( (OpWalrusPlayer)source.Pawn );
-
-			for (int i = 0; i < spectators.Count; i++)
-			{
-				//Log.Info( spectators[i].GetClientOwner() );
-			}
-			//Log.Info( returnVal );
-			return returnVal;
-			*/
 		}
 
 			[ServerCmd( "getTeam" )]
@@ -368,7 +346,7 @@ namespace OpWalrus
 				}
 				else if(All[i] is EntDoor door )
 				{
-
+					door.FireOutput( "forceCloseDoor", this, null, 0.0f );
 					//door.Close( );
 					//FuncButton
 					//new Output( door, "Close" ).Fire( this, 0.0f );
