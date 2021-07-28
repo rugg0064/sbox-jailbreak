@@ -257,9 +257,9 @@ namespace OpWalrus
 				}
 				
 				//Begin doors closing
-				else if ( All[i] is EntDoor door )
+				else if ( All[i] is DoorEntity door )
 				{
-					door.FireOutput( "forceCloseDoor", this, null, 0.0f );
+					door.Close();
 				}
 			
 				//Kill everyone & remove warden
