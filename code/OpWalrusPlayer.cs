@@ -41,13 +41,18 @@ namespace OpWalrus
 			Inventory.DeleteContents();
 		}
 
-		public void dressToTeam()
+		public void undress()
 		{
-			for (int i = 0; i < clothes.Count; i++ )
+			for ( int i = 0; i < clothes.Count; i++ )
 			{
 				clothes[i].Delete();
 			}
 			clothes.Clear();
+		}
+
+		public void dressToTeam()
+		{
+			undress();
 
 			List<String> clothesToAdd = new List<String>();
 
@@ -96,41 +101,6 @@ namespace OpWalrus
 				entity.EnableHideInFirstPerson = true;
 				clothes.Add( entity );
 			}
-
-			/*
-			if( helmetModelString != null)
-			{
-				Log.Info( "Putting on: " + helmetModelString );
-				ModelEntity helmet = new ModelEntity();
-				helmet.SetModel( helmetModelString );
-				helmet.SetParent( this, true );
-				helmet.EnableShadowInFirstPerson = true;
-				helmet.EnableHideInFirstPerson = true;
-				clothes.Add( helmet );
-			}
-
-			if ( legsModelString != null )
-			{
-				Log.Info( "Putting on: " + legsModelString );
-				ModelEntity legs = new ModelEntity();
-				legs.SetModel( legsModelString );
-				legs.SetParent( this, true );
-				legs.EnableShadowInFirstPerson = true;
-				legs.EnableHideInFirstPerson = true;
-				clothes.Add( legs );
-			}
-
-			if ( shirtModelString != null )
-			{
-				Log.Info( "Putting on: " + shirtModelString );
-				ModelEntity shirt = new ModelEntity();
-				shirt.SetModel( shirtModelString );
-				shirt.SetParent( this, true );
-				shirt.EnableShadowInFirstPerson = true;
-				shirt.EnableHideInFirstPerson = true;
-				clothes.Add( shirt );
-			}
-			*/
 		}
 
 		public override void Simulate( Client cl )
@@ -210,6 +180,7 @@ namespace OpWalrus
 			//Log.Info( IsServer );
 			if( newSpectatorState  == true )
 			{ //is setting to spectator
+				undress();
 				EnableAllCollisions = false;
 				EnableDrawing = false;
 				Controller = new NoclipController();

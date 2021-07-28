@@ -1,4 +1,5 @@
 using Sandbox;
+using System.Threading.Tasks;
 
 namespace OpWalrus
 {
@@ -13,25 +14,29 @@ namespace OpWalrus
 		[Input]
 		public void spawnItem()
 		{
-			Entity p;
+			Entity p = null;
 			switch ( ID )
 			{
 				case 0:
-					p = new Pistol();
-					p.Position = this.Position;
-					p.Spawn();
+					p = Library.Create<Pistol>();
+					//p = new Pistol();
 					break;
 				case 1:
-					p = new Shotgun();
-					p.Position = this.Position;
-					p.Spawn();
+					p = Library.Create<Shotgun>();
+					//p = new Shotgun();
 					break;
 				case 2:
-					p = new SMG();
-					p.Position = this.Position;
-					p.Spawn();
+					p = Library.Create<SMG>();
+					//p = new SMG();
 					break;
 			}
+			p.Position = this.Position;
+		}
+
+		protected async Task createWeapon(int id)
+		{
+			await GameTask.NextPhysicsFrame();
+			
 		}
 	}
 }

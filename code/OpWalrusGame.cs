@@ -27,7 +27,7 @@ namespace OpWalrus
 			if ( IsServer )
 			{
 				spectators = new List<OpWalrusPlayer>();
-				gamestate = OpWalrusGameInfo.GameState.Playing;
+				gamestate = OpWalrusGameInfo.GameState.EnoughPlayersCheck;
 				lastGameStateChangeTime = Time.Now;
 
 				teamCounts = new Dictionary<OpWalrusGameInfo.Team, int>();
@@ -58,6 +58,16 @@ namespace OpWalrus
 			player.Respawn();
 
 			teamCounts[OpWalrusGameInfo.roleToTeam[player.role]]++;
+			player.setSpectator( true );
+			spectators.Add( player );
+		}
+
+		public override void ClientDisconnect( Client cl, NetworkDisconnectionReason reason )
+		{
+			OpWalrusPlayer player = ((OpWalrusPlayer)cl.Pawn);
+			teamCounts[OpWalrusGameInfo.roleToTeam[player.role]]--;
+
+			base.ClientDisconnect( cl, reason );
 		}
 
 		public override void OnKilled( Entity pawn )
@@ -135,7 +145,7 @@ namespace OpWalrus
 		{
 			OpWalrusGameInfo.GameState[] states = Enum.GetValues<OpWalrusGameInfo.GameState>();
 			int curGameStateIndex = Array.IndexOf( states, gamestate );
-			Log.Info( curGameStateIndex );
+			//Log.Info( curGameStateIndex );
 			int nextGameStateIndex;
 			if ( curGameStateIndex == states.Length - 1 )
 			{
@@ -147,12 +157,17 @@ namespace OpWalrus
 			}
 			//gamestate = states[nextGameStateIndex];
 
-			endGameState( gamestate );
+			if ( endGameState(gamestate) )
+            {
+				gamestate = states[nextGameStateIndex];
+				lastGameStateChangeTime = Time.Now;
 
-			gamestate = states[nextGameStateIndex];
-			lastGameStateChangeTime = Time.Now;
-
-			beginGameState( gamestate );
+				beginGameState( gamestate );
+			}
+			else
+			{
+				lastGameStateChangeTime = Time.Now;
+			}
 		}
 
 		public void simulateGameState()
@@ -160,7 +175,7 @@ namespace OpWalrus
 
 		}
 
-		public void beginGameState(OpWalrusGameInfo.GameState newGameState)
+		public bool beginGameState(OpWalrusGameInfo.GameState newGameState)
 		{
 			switch ( gamestate )
 			{
@@ -170,62 +185,72 @@ namespace OpWalrus
 					beginPostGame();
 					break;
 			}
+			return true;
 		}
 
-		public void endGameState( OpWalrusGameInfo.GameState oldGameState)
+		//Returns true if the gamestate is ready to be ended
+		public bool endGameState( OpWalrusGameInfo.GameState oldGameState)
 		{
 			switch ( gamestate )
 			{
+				case OpWalrusGameInfo.GameState.EnoughPlayersCheck:
+					return isEnoughPlayers();
+					break;
+				case OpWalrusGameInfo.GameState.Pregame:
+					return endPregame();
+					break;
 				case OpWalrusGameInfo.GameState.Playing:
 					break;
 				case OpWalrusGameInfo.GameState.PostGame:
-					endPostGame();
 					break;
 			}
+			return true;
 		}
 
-		public void moveToRandomSpawnpoint(OpWalrusPlayer player)
+		public bool isEnoughPlayers()
 		{
-			List<Vector3> spawnPositions = getSpawnPositions( OpWalrusGameInfo.roleToTeam[player.role] );
-			if ( spawnPositions.Count == 0 )
-			{
-				throw new Exception( "Error: no spawn positions found" );
-			}
-
-			int randIndex = Rand.Int( 0, spawnPositions.Count - 1 );
-			//Log.Info( randIndex );c
-			player.Position = spawnPositions[randIndex];
-			player.Velocity = Vector3.Zero;
+			return teamCounts[OpWalrusGameInfo.Team.Prisoners] > 0 && teamCounts[OpWalrusGameInfo.Team.Guards] > 0;
 		}
 
-
-		public List<Vector3> getSpawnPositions(OpWalrusGameInfo.Team team)
+		public bool endPregame()
 		{
-			List<Vector3> positions = new List<Vector3>();
-			Entity[] entities;
-			if (team == OpWalrusGameInfo.Team.Guards)
+			OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
+			List<OpWalrusPlayer> guards = new List<OpWalrusPlayer>();
+
+			//Set all spectators back to normal players
+			for ( int i = 0; i < spectators.Count; i++ )
 			{
-				entities = All.OfType<opwgs>().ToArray();
+				spectators[i].setSpectator( false );
 			}
-			else
+			spectators.Clear();
+
+			//Respawn everybody
+			for ( int i = 0; i < players.Length; i++ )
 			{
-				entities = All.OfType<opwps>().ToArray();
+				Log.Info( "Respawn" );
+				players[i].Respawn();
+				moveToRandomSpawnpoint( players[i] );
+				if ( players[i].role == OpWalrusGameInfo.Role.Guard )
+				{
+					guards.Add( players[i] );
+				}
 			}
 
-			for ( int i = 0; i < entities.Length; i++ )
+			//Select a warden
+			if ( guards.Count > 0 )
 			{
-				positions.Add( entities[i].Position );
+				curWarden = guards[Rand.Int( 0, guards.Count - 1 )];
+				curWarden.role = OpWalrusGameInfo.Role.Warden;
 			}
 
-			return positions;
+			return true;
 		}
 
-		public void beginPostGame()
+		public bool beginPostGame()
 		{
 			for ( int i = 0; i < All.Count; i++ )
 			{
 				//Remove entities
-				//Log.Info( (All[i], All[i].EntityName, All[i].GetType()) );
 				if ( All[i].GetType().IsSubclassOf( typeof( Weapon ) ) )
 				{
 					All[i].Delete();
@@ -236,7 +261,8 @@ namespace OpWalrus
 				{
 					door.FireOutput( "forceCloseDoor", this, null, 0.0f );
 				}
-
+			
+				//Kill everyone & remove warden
 				else if( All[i] is OpWalrusPlayer player )
 				{
 					player.setSpectator( true );
@@ -246,37 +272,6 @@ namespace OpWalrus
 						curWarden = null;
 					}
 				}
-			}
-		}
-
-		public bool endPostGame()
-		{
-			OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
-			List<OpWalrusPlayer> guards = new List<OpWalrusPlayer>();
-
-			for ( int i = 0; i < spectators.Count; i++ )
-			{
-				spectators[i].setSpectator( false );
-			}
-
-			for ( int i = 0; i < players.Length; i++ )
-			{
-				Log.Info( "Respawn" );
-				players[i].Respawn();
-				moveToRandomSpawnpoint( players[i] );
-				if(players[i].role == OpWalrusGameInfo.Role.Guard)
-				{
-					guards.Add( players[i] );
-				}
-			}
-
-			spectators.Clear();
-
-			//Select a warden
-			if(guards.Count > 0)
-			{
-				curWarden = guards[Rand.Int( 0, guards.Count - 1 )];
-				curWarden.role = OpWalrusGameInfo.Role.Warden;
 			}
 
 			return true;
@@ -295,7 +290,7 @@ namespace OpWalrus
 			return true;
 		}
 
-			[ServerCmd( "getTeam" )]
+		[ServerCmd( "getTeam" )]
 		public static void getTeam( string playerName )
 		{
 			Log.Info( "Team of: " + playerName );
@@ -449,6 +444,41 @@ namespace OpWalrus
 			}
 
 			return succeeded;
+		}
+
+		public void moveToRandomSpawnpoint( OpWalrusPlayer player )
+		{
+			List<Vector3> spawnPositions = getSpawnPositions( OpWalrusGameInfo.roleToTeam[player.role] );
+			if ( spawnPositions.Count == 0 )
+			{
+				throw new Exception( "Error: no spawn positions found" );
+			}
+
+			int randIndex = Rand.Int( 0, spawnPositions.Count - 1 );
+
+			player.Position = spawnPositions[randIndex];
+			player.Velocity = Vector3.Zero;
+		}
+
+		public List<Vector3> getSpawnPositions( OpWalrusGameInfo.Team team )
+		{
+			List<Vector3> positions = new List<Vector3>();
+			Entity[] entities;
+			if ( team == OpWalrusGameInfo.Team.Guards )
+			{
+				entities = All.OfType<opwgs>().ToArray();
+			}
+			else
+			{
+				entities = All.OfType<opwps>().ToArray();
+			}
+
+			for ( int i = 0; i < entities.Length; i++ )
+			{
+				positions.Add( entities[i].Position );
+			}
+
+			return positions;
 		}
 	}
 }

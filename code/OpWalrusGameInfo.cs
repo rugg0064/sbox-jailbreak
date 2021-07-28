@@ -32,16 +32,18 @@ namespace OpWalrus
 
 		public enum GameState
 		{
+			EnoughPlayersCheck,
+			Pregame,
 			Playing,
-			FinishedPlayer1,
 			PostGame
 		}
 
 		public static Dictionary<GameState, float> gameStateLengths = new Dictionary<GameState, float>
 		{
-			{GameState.Playing, 480f },
-			{GameState.FinishedPlayer1, 5f },
-			{GameState.PostGame, 5f }
+			{GameState.EnoughPlayersCheck, 0.15f },
+			{GameState.Pregame, 0.0f },
+			{GameState.Playing, 10.0f },
+			{GameState.PostGame, 1.0f }
 		};
 	}
 }
