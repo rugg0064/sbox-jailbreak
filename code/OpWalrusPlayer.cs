@@ -177,7 +177,7 @@ namespace OpWalrus
 		public static void setSpectatorCmd( string playerName )
 		{
 			OpWalrusPlayer player = OpWalrusUtils.getPlayerByName( All, playerName );
-			List<OpWalrusPlayer> spectators = ((OpWalrusGame)Game.Current).spectators;
+			IList<OpWalrusPlayer> spectators = ((OpWalrusGame)Game.Current).spectators;
 			bool isCurrentlySpectator = spectators.Contains( player );
 			if(isCurrentlySpectator)
 			{

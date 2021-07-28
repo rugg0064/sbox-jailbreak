@@ -12,20 +12,22 @@ namespace OpWalrus
 	public partial class OpWalrusGame : Sandbox.Game
 	{
 		public float preGameLength = 2f;
-		public float gameLength = 60f;
+		public float gameLength = 2f;
 		public float postGameLength = 2f;
 		public float prisonerOverGuardRatio = 4f / 1f;
 
 		Dictionary<OpWalrusGameInfo.Team, int> teamCounts { get; set; }
 		[Net] public OpWalrusGameInfo.GameState gamestate { set; get; }
 		[Net] public float lastGameStateChangeTime { get; set; }
-		public List<OpWalrusPlayer> spectators = new List<OpWalrusPlayer>();
+		[Net] public List<OpWalrusPlayer> spectators { set; get; }
+		[Net] public OpWalrusPlayer curWarden { set; get; }
 
 		public OpWalrusGame()
 		{
 			if ( IsServer )
 			{
-				gamestate = OpWalrusGameInfo.GameState.Pregame;
+				spectators = new List<OpWalrusPlayer>();
+				gamestate = OpWalrusGameInfo.GameState.Playing;
 				lastGameStateChangeTime = Time.Now;
 
 				teamCounts = new Dictionary<OpWalrusGameInfo.Team, int>();
@@ -38,6 +40,7 @@ namespace OpWalrus
 				Log.Info( "My Gamemode Has Created Serverside!" );
 
 				new OpWalrusHud();
+				new OpWalrusCrosshairHud();
 			}
 
 			if ( IsClient )
@@ -61,11 +64,51 @@ namespace OpWalrus
 		{
 			base.OnKilled( pawn );
 
-			if (pawn is OpWalrusPlayer opwp)
+			if (pawn is OpWalrusPlayer opwp )
 			{
 				opwp.Inventory.DeleteContents();
 				opwp.setSpectator( true );
 				spectators.Add( opwp );
+
+				bool foundAnyGuards = false;
+				bool foundAnyPrisoners = true;
+
+				bool foundALivingGuard = false;
+				bool foundALivingPrisoner = false;
+
+				OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
+				for (int i = 0; i < players.Length; i++)
+				{
+					OpWalrusPlayer player = players[i];
+					if(player.role == OpWalrusGameInfo.Role.Prisoner)
+					{
+						foundAnyPrisoners = true;
+						if(!spectators.Contains( player ))
+						{
+							foundALivingPrisoner = true;
+							break;
+						}
+					}
+					else
+					{
+						foundAnyGuards = true;
+						if ( !spectators.Contains( player ) )
+						{
+							foundALivingGuard = true;
+							break;
+						}
+					}
+				}
+
+				if(foundAnyGuards && !foundALivingGuard)
+				{
+					goToNextGameState();
+				}
+				else if ( foundAnyPrisoners && !foundALivingPrisoner )
+				{
+					goToNextGameState();
+				}
+
 			}
 		}
 
@@ -75,58 +118,70 @@ namespace OpWalrus
 
 			if ( IsServer )
 			{
-				switch ( gamestate )
+				if(Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
 				{
-					case OpWalrusGameInfo.GameState.Pregame:
-						simulatePregame();
-						break;
-					case OpWalrusGameInfo.GameState.Playing:
-						simulatePlaying();
-						break;
-					case OpWalrusGameInfo.GameState.PostGame:
-						simulatePostGame();
-						break;
+					Log.Info( "Changing game state" );
+
+					goToNextGameState();
+				}
+				else
+				{
+					simulateGameState();
 				}
 			}
 		}
 
-		public void killPlayer(OpWalrusPlayer player)
+		public void goToNextGameState()
 		{
-			player.setSpectator( true );
-			spectators.Add( player );
+			OpWalrusGameInfo.GameState[] states = Enum.GetValues<OpWalrusGameInfo.GameState>();
+			int curGameStateIndex = Array.IndexOf( states, gamestate );
+			Log.Info( curGameStateIndex );
+			int nextGameStateIndex;
+			if ( curGameStateIndex == states.Length - 1 )
+			{
+				nextGameStateIndex = 0;
+			}
+			else
+			{
+				nextGameStateIndex = curGameStateIndex + 1;
+			}
+			//gamestate = states[nextGameStateIndex];
+
+			endGameState( gamestate );
+
+			gamestate = states[nextGameStateIndex];
+			lastGameStateChangeTime = Time.Now;
+
+			beginGameState( gamestate );
 		}
 
-		public void simulatePregame()
+		public void simulateGameState()
 		{
-			if ( Time.Now > preGameLength + lastGameStateChangeTime )
+
+		}
+
+		public void beginGameState(OpWalrusGameInfo.GameState newGameState)
+		{
+			switch ( gamestate )
 			{
-				if ( preparePregame() )
-				{
-					setGameState( OpWalrusGameInfo.GameState.Playing );
-				}
+				case OpWalrusGameInfo.GameState.Playing:
+					break;
+				case OpWalrusGameInfo.GameState.PostGame:
+					beginPostGame();
+					break;
 			}
 		}
 
-		//Tries to set the game up to be playable
-		// ie. needs at least one guard.
-		// needs at least one prisoner, etc.
-		// returns false if it could not be prepared.
-		public bool preparePregame()
+		public void endGameState( OpWalrusGameInfo.GameState oldGameState)
 		{
-			OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
-			for(int i = 0; i < players.Length; i++ )
+			switch ( gamestate )
 			{
-				Log.Info( "Respawn" );
-				players[i].Respawn();
-				moveToRandomSpawnpoint( players[i] );
+				case OpWalrusGameInfo.GameState.Playing:
+					break;
+				case OpWalrusGameInfo.GameState.PostGame:
+					endPostGame();
+					break;
 			}
-
-			for(int i = 0; i < spectators.Count; i++ )
-			{
-				spectators[i].setSpectator( false );
-			}
-			spectators.Clear();
-			return true;
 		}
 
 		public void moveToRandomSpawnpoint(OpWalrusPlayer player)
@@ -165,20 +220,66 @@ namespace OpWalrus
 			return positions;
 		}
 
-		public void simulatePlaying()
+		public void beginPostGame()
 		{
-			if ( Time.Now > gameLength + lastGameStateChangeTime )
+			for ( int i = 0; i < All.Count; i++ )
 			{
-				setGameState( OpWalrusGameInfo.GameState.PostGame );
+				//Remove entities
+				//Log.Info( (All[i], All[i].EntityName, All[i].GetType()) );
+				if ( All[i].GetType().IsSubclassOf( typeof( Weapon ) ) )
+				{
+					All[i].Delete();
+				}
+				
+				//Begin doors closing
+				else if ( All[i] is EntDoor door )
+				{
+					door.FireOutput( "forceCloseDoor", this, null, 0.0f );
+				}
+
+				else if( All[i] is OpWalrusPlayer player )
+				{
+					player.setSpectator( true );
+					if(player.role == OpWalrusGameInfo.Role.Warden)
+					{
+						player.role = OpWalrusGameInfo.Role.Guard;
+						curWarden = null;
+					}
+				}
 			}
 		}
-		public void simulatePostGame()
+
+		public bool endPostGame()
 		{
-			if ( Time.Now > postGameLength + lastGameStateChangeTime )
+			OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
+			List<OpWalrusPlayer> guards = new List<OpWalrusPlayer>();
+
+			for ( int i = 0; i < spectators.Count; i++ )
 			{
-				preparePostGame();
-				setGameState( OpWalrusGameInfo.GameState.Pregame );
+				spectators[i].setSpectator( false );
 			}
+
+			for ( int i = 0; i < players.Length; i++ )
+			{
+				Log.Info( "Respawn" );
+				players[i].Respawn();
+				moveToRandomSpawnpoint( players[i] );
+				if(players[i].role == OpWalrusGameInfo.Role.Guard)
+				{
+					guards.Add( players[i] );
+				}
+			}
+
+			spectators.Clear();
+
+			//Select a warden
+			if(guards.Count > 0)
+			{
+				curWarden = guards[Rand.Int( 0, guards.Count - 1 )];
+				curWarden.role = OpWalrusGameInfo.Role.Warden;
+			}
+
+			return true;
 		}
 
 		public void setGameState( OpWalrusGameInfo.GameState newGameState)
@@ -258,7 +359,7 @@ namespace OpWalrus
 		[ServerCmd( "getSpectators" )]
 		public static void getSpectators()
 		{
-			List<OpWalrusPlayer> spectators = ((OpWalrusGame)Game.Current).spectators;
+			IList<OpWalrusPlayer> spectators = ((OpWalrusGame)Game.Current).spectators;
 			for ( int i = 0; i < spectators.Count; i++ )
 			{
 				Log.Info( spectators[i].GetClientOwner().Name );
@@ -282,7 +383,7 @@ namespace OpWalrus
 			}
 		}
 
-		public bool trySwitchTeam(OpWalrusPlayer player, OpWalrusGameInfo.Team wishTeam)
+		public bool trySwitchTeam( OpWalrusPlayer player, OpWalrusGameInfo.Team wishTeam)
 		{
 			OpWalrusGameInfo.Team oldTeam = OpWalrusGameInfo.roleToTeam[player.role];
 
@@ -318,6 +419,21 @@ namespace OpWalrus
 					Log.Info( (prisonerCountIfSucceed, guardCountIfSucceed, ratio) );
 					if ( ratio >= prisonerOverGuardRatio || bypass)
 					{
+						bool anyGuards = false;
+						OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
+						for(int i = 0; i < players.Length; i++)
+						{
+							if(OpWalrusGameInfo.roleToTeam[players[i].role] == OpWalrusGameInfo.Team.Guards)
+							{
+								anyGuards = true;
+								break;
+							}
+						}
+						if(!anyGuards)
+						{
+							goToNextGameState();
+						}
+
 						player.role = OpWalrusGameInfo.Role.Guard;
 						Log.Info( player.role );
 						succeeded = true;
@@ -333,26 +449,6 @@ namespace OpWalrus
 			}
 
 			return succeeded;
-		}
-
-		public void preparePostGame()
-		{
-			for(int i = 0; i < All.Count; i++ )
-			{
-				Log.Info( (All[i], All[i].EntityName, All[i].GetType()) );
-				if( All[i].GetType().IsSubclassOf(typeof(Weapon)) )
-				{
-					All[i].Delete();
-				}
-				else if(All[i] is EntDoor door )
-				{
-					door.FireOutput( "forceCloseDoor", this, null, 0.0f );
-					//door.Close( );
-					//FuncButton
-					//new Output( door, "Close" ).Fire( this, 0.0f );
-					//door.FireOutput( "Toggle", this, null, 0f );
-				}
-			}
 		}
 	}
 }

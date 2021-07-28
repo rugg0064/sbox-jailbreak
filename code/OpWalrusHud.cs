@@ -1,8 +1,5 @@
 ﻿using Sandbox.UI;
 
-//
-// You don't need to put things in a namespace, but it doesn't hurt.
-//
 namespace OpWalrus
 {
 	/// <summary>
@@ -15,7 +12,7 @@ namespace OpWalrus
 		{
 			if ( IsClient )
 			{
-				RootPanel.SetTemplate( "/minimalhud.html" );
+				RootPanel.AddChild<OpWalrusOverlay>();
 			}
 		}
 	}
