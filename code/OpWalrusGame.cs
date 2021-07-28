@@ -14,7 +14,7 @@ namespace OpWalrus
 		public float preGameLength = 2f;
 		public float gameLength = 2f;
 		public float postGameLength = 2f;
-		public float prisonerOverGuardRatio = 4f / 1f;
+		public float prisonerOverGuardRatio = 6f / 1f;
 
 		Dictionary<OpWalrusGameInfo.Team, int> teamCounts { get; set; }
 		[Net] public OpWalrusGameInfo.GameState gamestate { set; get; }
@@ -122,13 +122,14 @@ namespace OpWalrus
 		public override void Simulate( Client cl )
 		{
 			base.Simulate( cl );
-
+			teamCounts = new Dictionary<OpWalrusGameInfo.Team, int>();
+			teamCounts[OpWalrusGameInfo.Team.Guards] = 1;
+			teamCounts[OpWalrusGameInfo.Team.Prisoners] = 1;
 			if ( IsServer )
 			{
 				if(Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
 				{
 					Log.Info( "Changing game state" );
-
 					goToNextGameState();
 				}
 				else

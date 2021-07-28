@@ -60,33 +60,33 @@ namespace OpWalrus
 			{
 				case OpWalrusGameInfo.Role.Warden:
 					//Helmet
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_securityhelmetnostrap.vmdl" );
+					clothesToAdd.Add( "models/hat_securityhelmetnostrap.vmdl" );
 					//Legs
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers.smart.vmdl" );
+					clothesToAdd.Add( "models/trousers.smart.vmdl" );
 					//Shirt
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shirt/shirt_longsleeve.police.vmdl" );
+					clothesToAdd.Add( "models/shirt_longsleeve.police.vmdl" );
 					//Shoes
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/shoes.police.vmdl" );
+					clothesToAdd.Add( "models/shoes.police.vmdl" );
 					break;
 				case OpWalrusGameInfo.Role.Guard:
 					//Helmet
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_securityhelmet.vmdl" );
+					clothesToAdd.Add( "models/hat_securityhelmet.vmdl" );
 					//Legs
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers.smart.vmdl" );
+					clothesToAdd.Add( "models/trousers.smart.vmdl" );
 					//Shirt
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shirt/shirt_longsleeve.police.vmdl" );
+					clothesToAdd.Add( "models/shirt_longsleeve.police.vmdl" );
 					//Shoes
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/shoes.police.vmdl" );
+					clothesToAdd.Add( "models/shoes.police.vmdl" );
 					break;
 				case OpWalrusGameInfo.Role.Prisoner:
 					//Helmet
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_woolly.vmdl" );
+					clothesToAdd.Add( "models/hat_woolly.vmdl" );
 					//Legs
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers_tracksuit.vmdl" );
+					clothesToAdd.Add( "models/trousers_tracksuit.vmdl" );
 					//Shirt
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/jacket/jacket.red.vmdl" );
+					clothesToAdd.Add( "models/jacket.red.vmdl" );
 					//Shoes
-					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/trainers.vmdl" );
+					clothesToAdd.Add( "model/trainers.vmdl" );
 					break;
 			}
 
