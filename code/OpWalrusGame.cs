@@ -73,7 +73,6 @@ namespace OpWalrus
 		public override void OnKilled( Entity pawn )
 		{
 			base.OnKilled( pawn );
-
 			if (pawn is OpWalrusPlayer opwp )
 			{
 				opwp.Inventory.DeleteContents();
@@ -96,7 +95,6 @@ namespace OpWalrus
 						if(!spectators.Contains( player ))
 						{
 							foundALivingPrisoner = true;
-							break;
 						}
 					}
 					else
@@ -105,7 +103,6 @@ namespace OpWalrus
 						if ( !spectators.Contains( player ) )
 						{
 							foundALivingGuard = true;
-							break;
 						}
 					}
 				}
