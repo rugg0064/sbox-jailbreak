@@ -1,0 +1,126 @@
+﻿teammenu {
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    margin: 100px;
+    margin-bottom: 200px;
+    border-radius: 5px;
+    pointer-events: none;
+    transition: all 0.1s ease-out;
+    position: absolute;
+    font-family: poppins;
+    opacity: 0;
+    
+        button {
+            padding: 6px 5px;
+            margin-right: 10px;
+            font-size: 13px;
+            align-items: center;
+            font-weight: 600;
+            opacity: 0.2;
+            color: #fff;
+            cursor: pointer;
+            //border-radius: 5px;
+            
+        }
+
+    .left {
+        flex-grow: 1;
+        flex-direction: column;
+        position: relative;
+        left: -500px;
+        transition: all 0.3s ease-in;
+        .changeteam{
+            color: blue;
+            padding: 10px;
+            left: 400px;
+            top: 700px;
+            right: 100px;
+            width: 170px;
+            height: 100px;
+            opacity: 0.5;
+            font-size: 35px;
+        }
+
+        .body {
+            border-radius: 10px;
+            background-color: #8800ff;
+            flex-grow: 1;
+            width: 1730px;
+            .policeButton {
+                color: blue;
+                padding: -20px -20px;
+                left: 400px;
+                top: 720px;
+                right: 100px;
+                width: 170px;
+                height: 100px;
+                opacity: 0.5;
+                font-size: 35px;
+                text-align: center;
+                label {
+                    text-shadow: 1px 1px 4px black;
+                    bottom: 30px;
+                }
+                &:hover{
+                    opacity:1;
+                }
+            }
+            .prisonerButton {
+                color: #ff5100;
+                padding: 10px;
+                left: 400px;
+                top: 720px;
+                right: 600px;
+                width: 170px;
+                height: 100px;
+                opacity: 0.7;
+                font-size: 35px;
+
+                label {
+                    text-shadow: 1px 1px 4px black;
+                    bottom: 30px;
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+            .policeBody{
+                background-color: rgba( #111, 0.7 );
+                border-radius: 5px 0px 0px 5px;
+                width:900px;
+                left: 6px;
+                height:765px;
+                top: 7px;
+                background-image: url('https://i.redd.it/144nac4n8ek51.jpg');
+                background-size: cover; 
+            }
+            .prisonerBody{
+                background-color: rgba( #111, 0.7 );
+                border-radius: 0px 5px 5px 0px;
+                width:900px;
+                right: 6px;
+                height:765px;
+                top: 7px;
+                background-image: url('https://cdn5.vectorstock.com/i/1000x1000/01/59/prisoner-vector-540159.jpg');
+                
+            }
+        }
+    }
+}
+
+
+.teammenuopen teammenu {
+    transition: all 0.2s ease-out;
+    pointer-events: all;
+    opacity: 1;
+    transform: scale( 1 );
+
+    .left, .right {
+        left: 0;
+        transition: all 0.1s ease-out;
+    }
+}
+
