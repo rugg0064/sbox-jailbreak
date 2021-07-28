@@ -43,7 +43,7 @@ namespace OpWalrus
 			{GameState.EnoughPlayersCheck, 0.15f },
 			{GameState.Pregame, 0.0f },
 			{GameState.Playing, 360.0f },
-			{GameState.PostGame, 1.0f }
+			{GameState.PostGame, 7.5f }
 		};
 	}
 }
