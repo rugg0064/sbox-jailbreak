@@ -39,7 +39,7 @@ namespace OpWalrus
 
 		public static Dictionary<GameState, float> gameStateLengths = new Dictionary<GameState, float>
 		{
-			{GameState.Playing, 20f },
+			{GameState.Playing, 480f },
 			{GameState.FinishedPlayer1, 5f },
 			{GameState.PostGame, 5f }
 		};

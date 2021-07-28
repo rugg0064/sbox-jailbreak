@@ -49,20 +49,55 @@ namespace OpWalrus
 			}
 			clothes.Clear();
 
-			string helmetModelString = null;
+			List<String> clothesToAdd = new List<String>();
+
 			switch (this.role)
 			{
 				case OpWalrusGameInfo.Role.Warden:
-					helmetModelString = "addons/citizen/models/citizen_clothes/hat/hat_securityhelmetnostrap.vmdl";
+					//Helmet
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_securityhelmetnostrap.vmdl" );
+					//Legs
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers.smart.vmdl" );
+					//Shirt
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shirt/shirt_longsleeve.police.vmdl" );
+					//Shoes
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/shoes.police.vmdl" );
 					break;
 				case OpWalrusGameInfo.Role.Guard:
-					helmetModelString = "addons/citizen/models/citizen_clothes/hat/hat_securityhelmet.vmdl";
+					//Helmet
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_securityhelmet.vmdl" );
+					//Legs
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers.smart.vmdl" );
+					//Shirt
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shirt/shirt_longsleeve.police.vmdl" );
+					//Shoes
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/shoes.police.vmdl" );
 					break;
 				case OpWalrusGameInfo.Role.Prisoner:
-					helmetModelString = "addons/citizen/models/citizen_clothes/hat/hat_leathercapnobadge.vmdl";
+					//Helmet
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/hat/hat_woolly.vmdl" );
+					//Legs
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/trousers/trousers_tracksuit.vmdl" );
+					//Shirt
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/jacket/jacket.red.vmdl" );
+					//Shoes
+					clothesToAdd.Add( "addons/citizen/models/citizen_clothes/shoes/trainers.vmdl" );
 					break;
 			}
 
+			for(int i = 0; i < clothesToAdd.Count; i++ )
+			{
+				string clothesModelString = clothesToAdd[i];
+				Log.Info( "Putting on: " + clothesModelString );
+				ModelEntity entity = new ModelEntity();
+				entity.SetModel( clothesModelString );
+				entity.SetParent( this, true );
+				entity.EnableShadowInFirstPerson = true;
+				entity.EnableHideInFirstPerson = true;
+				clothes.Add( entity );
+			}
+
+			/*
 			if( helmetModelString != null)
 			{
 				Log.Info( "Putting on: " + helmetModelString );
@@ -73,6 +108,29 @@ namespace OpWalrus
 				helmet.EnableHideInFirstPerson = true;
 				clothes.Add( helmet );
 			}
+
+			if ( legsModelString != null )
+			{
+				Log.Info( "Putting on: " + legsModelString );
+				ModelEntity legs = new ModelEntity();
+				legs.SetModel( legsModelString );
+				legs.SetParent( this, true );
+				legs.EnableShadowInFirstPerson = true;
+				legs.EnableHideInFirstPerson = true;
+				clothes.Add( legs );
+			}
+
+			if ( shirtModelString != null )
+			{
+				Log.Info( "Putting on: " + shirtModelString );
+				ModelEntity shirt = new ModelEntity();
+				shirt.SetModel( shirtModelString );
+				shirt.SetParent( this, true );
+				shirt.EnableShadowInFirstPerson = true;
+				shirt.EnableHideInFirstPerson = true;
+				clothes.Add( shirt );
+			}
+			*/
 		}
 
 		public override void Simulate( Client cl )
