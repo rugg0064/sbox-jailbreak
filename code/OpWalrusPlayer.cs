@@ -93,7 +93,7 @@ namespace OpWalrus
 			for(int i = 0; i < clothesToAdd.Count; i++ )
 			{
 				string clothesModelString = clothesToAdd[i];
-				Log.Info( "Putting on: " + clothesModelString );
+
 				ModelEntity entity = new ModelEntity();
 				entity.SetModel( clothesModelString );
 				entity.SetParent( this, true );

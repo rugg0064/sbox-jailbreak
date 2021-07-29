@@ -115,7 +115,6 @@ namespace OpWalrus
 			{
 				if(Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
 				{
-					Log.Info( "Changing game state" );
 					goToNextGameState();
 				}
 				else
@@ -403,12 +402,16 @@ namespace OpWalrus
 					succeeded = true;
 					break;
 				case OpWalrusGameInfo.Team.Guards:
-
 					int numOfPlayers = All.OfType<OpWalrusPlayer>().Count();
 					int maxNumOfGuards = (int)(numOfPlayers / playersPerGuard) + 1;
+					int curNumOfGuards = getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards ).Count;
 					
-					player.role = OpWalrusGameInfo.Role.Guard;
-					succeeded = true;
+					if(curNumOfGuards + 1 >= maxNumOfGuards)
+					{	
+						player.role = OpWalrusGameInfo.Role.Guard;
+						succeeded = true;
+					}
+
 					break;
 			}
 
