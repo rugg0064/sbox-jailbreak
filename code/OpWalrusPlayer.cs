@@ -8,6 +8,7 @@ namespace OpWalrus
 	public partial class OpWalrusPlayer : Player
 	{
 		[Net] public OpWalrusGameInfo.Role role { get; set; }
+		[Net] public bool optinWarden { get; set; }
 		List<ModelEntity> clothes;		
 
 		public OpWalrusPlayer() : base()
@@ -15,6 +16,7 @@ namespace OpWalrus
 			clothes = new List<ModelEntity>();
 			role = OpWalrusGameInfo.Role.Prisoner;
 			this.Inventory = new Inventory( this );
+			optinWarden = false;
 		}
 
 		public override void Respawn()
@@ -42,6 +44,13 @@ namespace OpWalrus
 			Inventory.DeleteContents();
 		}
 
+		[ServerCmd]
+		public static void flipWardenOptin()
+		{
+			// ^= true flips the bool
+			((OpWalrusPlayer)ConsoleSystem.Caller.Pawn).optinWarden ^= true;
+		}
+		
 		public void undress()
 		{
 			for ( int i = 0; i < clothes.Count; i++ )

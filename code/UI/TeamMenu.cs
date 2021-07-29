@@ -6,51 +6,55 @@ using System;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
-[Library]
-public partial class TeamMenu : Panel
+namespace OpWalrus
 {
-	public static TeamMenu Instance;
-
-	public TeamMenu()
+	[Library]
+	public partial class TeamMenu : Panel
 	{
-		Instance = this;
-
-		StyleSheet.Load( "/ui/TeamMenu.scss" );
-
-		var left = Add.Panel( "left" );
+		Label wardenText;
+		Panel wardenPanel;
+		public TeamMenu()
 		{
-			var body = left.Add.Panel( "body" );
+			StyleSheet.Load( "/ui/TeamMenu.scss" );
+
+			Panel body = Add.Panel( "body" );
+
+			Panel policeBody = body.Add.Panel( "policeBody" );
+			policeBody.AddEventListener( "onclick", () =>
 			{
-				var policeBody = body.Add.Panel( "policeBody" );
-				{
-					var policeButton = policeBody.Add.Button( "Police", "policeButton" );
-					policeButton.AddEventListener("onclick", () =>
-						{
-							ConsoleSystem.Run( "trySwitchTeam Guards" );
-							Log.Info( "Clicked on police" );
-						}
-					);
-				}
-				var prisonerBody = body.Add.Panel( "prisonerBody" );
-				{
-					var prisonerButton = prisonerBody.Add.Button( "Prisoner", "prisonerButton" );
-					prisonerButton.AddEventListener("onclick", () =>
-						{
-							ConsoleSystem.Run( "trySwitchTeam Prisoners" );
-						}
-					
-					);
-				}
-			}
+				ConsoleSystem.Run( "trySwitchTeam Guards" );
+			} );
+			Label policeText = policeBody.Add.Label( "Guards", "policeText" );
+
+			wardenPanel = Add.Panel( "wardenPanel" );
+			wardenPanel.AddEventListener( "onclick", () =>
+			{
+				OpWalrusPlayer.flipWardenOptin();
+			} );
+			wardenPanel.Add.Label( "Opt in to warden?", "textA" );
+			wardenText = wardenPanel.Add.Label( "", "textB" );
+
+			Panel prisonerBody = body.Add.Panel( "prisonerBody" );
+			prisonerBody.AddEventListener( "onclick", () =>
+			{
+				ConsoleSystem.Run( "trySwitchTeam Prisoners" );
+			} );
+			Label prisonerText = prisonerBody.Add.Label( "Prisoners", "prisonerText" );
 		}
-		
-	}
 
-	public override void Tick()
-	{
-		base.Tick();
+		public override void Tick()
+		{
+			base.Tick();
 
-		Parent.SetClass( "teammenuopen", Input.Down( InputButton.Menu ) );
+			OpWalrusPlayer localPlayer = ((OpWalrusPlayer)Local.Pawn);
+
+			Parent.SetClass( "teammenuopen", Input.Down( InputButton.Menu ) );
+
+			wardenText.SetText( localPlayer.optinWarden ? "Yes" : "No" );
+			
+			wardenPanel.SetClass( "visible", OpWalrusGameInfo.roleToTeam[localPlayer.role] == OpWalrusGameInfo.Team.Guards );
+		}
+
 	}
 
 }

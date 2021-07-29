@@ -1,111 +1,105 @@
 ﻿teammenu {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
     left: 0px;
-    right: 0px;
     top: 0px;
-    bottom: 0px;
-    margin: 100px;
-    margin-bottom: 200px;
-    border-radius: 5px;
     pointer-events: none;
     transition: all 0.1s ease-out;
-    position: absolute;
     font-family: poppins;
     opacity: 0;
     z-index: 99;
-    
-        button {
-            padding: 6px 5px;
-            margin-right: 10px;
-            font-size: 13px;
-            align-items: center;
-            font-weight: 600;
-            opacity: 0.2;
-            color: #fff;
-            cursor: pointer;
-            //border-radius: 5px;
-        }
 
-    .left {
-        flex-grow: 1;
-        flex-direction: column;
-        position: relative;
-        left: -500px;
-        transition: all 0.3s ease-in;
-        .changeteam{
-            color: blue;
-            padding: 10px;
-            left: 400px;
-            top: 700px;
-            right: 100px;
-            width: 170px;
-            height: 100px;
-            opacity: 0.5;
+    .wardenPanel {
+        cursor: pointer;
+        flex-direction: row;
+        position: absolute;
+        top: 900px;
+        left: 400px;
+        width: 600px;
+        height: 50px;
+        opacity: 0.0;
+        background-color: black;
+
+        .textA {
             font-size: 35px;
+            height: 100%;
+            width: 79%;
+            color: white;
         }
 
-        .body {
-            border-radius: 10px;
-            background-color: #8800ff;
-            flex-grow: 1;
-            width: 1730px;
-            .policeButton {
-                color: blue;
-                padding: -20px -20px;
-                left: 400px;
-                top: 720px;
-                right: 100px;
-                width: 170px;
-                height: 100px;
-                opacity: 0.5;
-                font-size: 35px;
+        .textB {
+            font-size: 35px;
+            height: 100%;
+            width: 19%;
+            color: white;
+        }
+
+        &.visible {
+            opacity: 0.9;
+        }
+    }
+
+    .body {
+        width: 80%;
+        height: 60%;
+        flex-direction: row;
+        transition: all 0.3s ease-in;
+        border-radius: 10px;
+        background-color: rgb(0 0 0 / 0.95);
+        border-radius: 20px 0px 0px 20px;
+
+        .policeBody {
+            cursor: pointer;
+            height: 100%;
+            width: 50%;
+            background-color: rgba( #111, 0.7 );
+            border-radius: 20px 20px 20px 20px;
+            background-image: url('https://i.redd.it/144nac4n8ek51.jpg');
+            background-size: cover;
+            transition: transform 0.10s ease;
+
+            &:hover {
+                transform: scale(0.95);
+            }
+
+            .policeText {
+                pointer-events: none;
+                opacity: 0.75;
+                color: white;
+                top: 90%;
                 text-align: center;
-                label {
-                    text-shadow: 1px 1px 4px black;
-                    bottom: 30px;
-                }
-                &:hover{
-                    opacity:1;
-                }
+                height: 40px;
+                font-size: 40px;
+                font-weight: bolder;
+                width: 100%;
             }
-            .prisonerButton {
-                color: #ff5100;
-                padding: 10px;
-                left: 400px;
-                top: 720px;
-                right: 600px;
-                width: 170px;
-                height: 100px;
-                opacity: 0.7;
-                font-size: 35px;
+        }
 
-                label {
-                    text-shadow: 1px 1px 4px black;
-                    bottom: 30px;
-                }
+        .prisonerBody {
+            height: 100%;
+            width: 50%;
+            cursor: pointer;
+            background-color: rgba( #111, 0.7 );
+            border-radius: 20px 20px 20px 20px;
+            background-image: url('https://cdn5.vectorstock.com/i/1000x1000/01/59/prisoner-vector-540159.jpg');
+            transition: transform 0.10s ease;
 
-                &:hover {
-                    opacity: 1;
-                }
+            &:hover {
+                transform: scale(0.95);
             }
-            .policeBody{
-                background-color: rgba( #111, 0.7 );
-                border-radius: 5px 0px 0px 5px;
-                width:900px;
-                left: 6px;
-                height:765px;
-                top: 7px;
-                background-image: url('https://i.redd.it/144nac4n8ek51.jpg');
-                background-size: cover; 
-            }
-            .prisonerBody{
-                background-color: rgba( #111, 0.7 );
-                border-radius: 0px 5px 5px 0px;
-                width:900px;
-                right: 6px;
-                height:765px;
-                top: 7px;
-                background-image: url('https://cdn5.vectorstock.com/i/1000x1000/01/59/prisoner-vector-540159.jpg');
-                
+
+            .prisonerText {
+                opacity: 0.75;
+                color: black;
+                top: 90%;
+                text-align: center;
+                height: 40px;
+                font-size: 40px;
+                font-weight: bolder;
+                width: 100%;
             }
         }
     }
@@ -123,4 +117,3 @@
         transition: all 0.1s ease-out;
     }
 }
-

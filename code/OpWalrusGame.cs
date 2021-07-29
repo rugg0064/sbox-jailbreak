@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using static OpWalrus.OpWalrusGameInfo;
 
@@ -244,7 +245,7 @@ namespace OpWalrus
 			//Set all spectators back to normal players
 			for ( int i = 0; i < spectators.Count; i++ )
 			{
-				spectators[i].setSpectator( false );
+				//spectators[i].setSpectator( false );
 			}
 			spectators.Clear();
 
@@ -256,17 +257,37 @@ namespace OpWalrus
 
 			//Set a random guard to become warden
 			List<OpWalrusPlayer> guards = getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards );
+			List<OpWalrusPlayer> optedInGuards = new List<OpWalrusPlayer>();
 			if(guards.Count > 0)
 			{
-				curWarden = Rand.FromList<OpWalrusPlayer>( guards );
-				curWarden.role = OpWalrusGameInfo.Role.Warden;
+				foreach(OpWalrusPlayer guard in guards)
+				{
+					if(guard.optinWarden)
+					{
+						optedInGuards.Add( guard );
+					}
+				}
+
+				if(optedInGuards.Count > 0)
+				{
+					curWarden = Rand.FromList<OpWalrusPlayer>( optedInGuards );
+					curWarden.role = OpWalrusGameInfo.Role.Warden;
+				}
+				else
+				{
+					curWarden = Rand.FromList<OpWalrusPlayer>( guards );
+					curWarden.role = OpWalrusGameInfo.Role.Warden;
+				}
 			}
+
 
 			return true;
 		}
 
 		public bool beginPostGame()
 		{
+
+			tryAutobalance();
 
 			foreach( Entity e in All)
 			{
@@ -286,6 +307,7 @@ namespace OpWalrus
 				else if ( e is OpWalrusPlayer player )
 				{
 					player.setSpectator( true );
+					spectators.Add( player );
 					if ( player.role == OpWalrusGameInfo.Role.Warden )
 					{
 						player.role = OpWalrusGameInfo.Role.Guard;
@@ -326,6 +348,28 @@ namespace OpWalrus
 			return playersOfTeam;
 		}
 
+		//Returns true if game was autobalanced
+		public bool tryAutobalance()
+		{
+			int numOfPlayers = All.OfType<OpWalrusPlayer>().Count();
+
+			int maxNumOfGuards = (int)(numOfPlayers / playersPerGuard) + 1;
+
+			int curNumOfGuards = getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards ).Count;
+
+			bool autobalanced = false;
+			if(curNumOfGuards > maxNumOfGuards)
+			{
+				int guardsToKick = curNumOfGuards - maxNumOfGuards;
+				for(int i = 0; i < guardsToKick; i++ )
+				{
+					OpWalrusPlayer randomGuard = Rand.FromList<OpWalrusPlayer>( getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards ) );
+					randomGuard.role = Role.Prisoner;
+				}
+				autobalanced = true;
+			}
+			return autobalanced;
+		}
 
 		public override bool CanHearPlayerVoice( Client source, Client dest )
 		{
@@ -375,7 +419,8 @@ namespace OpWalrus
 					int numOfPlayers = All.OfType<OpWalrusPlayer>().Count();
 					int maxNumOfGuards = (int)(numOfPlayers / playersPerGuard) + 1;
 					int curNumOfGuards = getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards ).Count;
-					if(curNumOfGuards + 1 >= maxNumOfGuards)
+					Log.Info( (maxNumOfGuards, curNumOfGuards) );
+					if(curNumOfGuards + 1 <= maxNumOfGuards)
 					{	
 						player.role = OpWalrusGameInfo.Role.Guard;
 						succeeded = true;
