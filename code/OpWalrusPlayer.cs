@@ -122,6 +122,7 @@ namespace OpWalrus
 						Entity activeEntity = Inventory.GetSlot( activeSlot );
 						activeEntity.Spawn();
 						activeEntity.Position = EyePos + EyeRot.Forward * 64;
+						activeEntity.Velocity += EyeRot.Forward * 50;
 
 						Inventory.Drop( activeEntity );
 					}
