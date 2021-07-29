@@ -13,8 +13,8 @@ namespace OpWalrus
 			if ( IsClient )
 			{
 				RootPanel.AddChild<OpWalrusOverlay>();
-				RootPanel.AddChild<OpWalrusWinMenu>();
 				RootPanel.AddChild<TeamMenu>();
+				RootPanel.AddChild<OpWalrusWinMenu>();
 			}
 		}
 	}
