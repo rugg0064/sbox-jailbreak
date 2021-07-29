@@ -291,6 +291,21 @@ namespace OpWalrus
 			return true;
 		}
 
+		[ServerCmd( "trySwitchTeam" )]
+		public static void trySwitchTeamCmd( string team )
+		{
+			OpWalrusGameInfo.Team[] teams = Enum.GetValues<OpWalrusGameInfo.Team>();
+			bool found = false;
+			for ( int i = 0; i < teams.Length && !found; i++ )
+			{
+				if ( team.Equals( teams[i].ToString() ) )
+				{
+					found = true;
+					((OpWalrusGame)Game.Current).trySwitchTeam( (OpWalrusPlayer)(ConsoleSystem.Caller.Pawn), teams[i] );
+				}
+			}
+		}
+
 		public bool trySwitchTeam( OpWalrusPlayer player, OpWalrusGameInfo.Team wishTeam)
 		{
 			OpWalrusGameInfo.Team oldTeam = OpWalrusGameInfo.roleToTeam[player.role];
@@ -312,7 +327,6 @@ namespace OpWalrus
 					int numOfPlayers = All.OfType<OpWalrusPlayer>().Count();
 					int maxNumOfGuards = (int)(numOfPlayers / playersPerGuard) + 1;
 					int curNumOfGuards = getAllPlayersOfTeam( OpWalrusGameInfo.Team.Guards ).Count;
-					
 					if(curNumOfGuards + 1 >= maxNumOfGuards)
 					{	
 						player.role = OpWalrusGameInfo.Role.Guard;
