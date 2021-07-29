@@ -73,47 +73,53 @@ namespace OpWalrus
 				opwp.Inventory.DeleteContents();
 				opwp.setSpectator( true );
 				spectators.Add( opwp );
-
-				bool foundAnyGuards = false;
-				bool foundAnyPrisoners = true;
-
-				bool foundALivingGuard = false;
-				bool foundALivingPrisoner = false;
-
-				OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
-				for (int i = 0; i < players.Length; i++)
-				{
-					OpWalrusPlayer player = players[i];
-					if(player.role == OpWalrusGameInfo.Role.Prisoner)
-					{
-						foundAnyPrisoners = true;
-						if(!spectators.Contains( player ))
-						{
-							foundALivingPrisoner = true;
-						}
-					}
-					else
-					{
-						foundAnyGuards = true;
-						if ( !spectators.Contains( player ) )
-						{
-							foundALivingGuard = true;
-						}
-					}
-				}
-
-				if(foundAnyGuards && !foundALivingGuard)
-				{
-					goToNextGameState();
-					winningTeam = Team.Prisoners;
-				}
-				else if ( foundAnyPrisoners && !foundALivingPrisoner )
-				{
-					goToNextGameState();
-					winningTeam = Team.Guards;
-				}
-
 			}
+			checkWinCondition();
+		}
+
+		public bool checkWinCondition()
+		{
+			bool didChangeGameState = false;
+
+			bool foundAnyGuards = false;
+			bool foundAnyPrisoners = true;
+
+			bool foundALivingGuard = false;
+			bool foundALivingPrisoner = false;
+
+			foreach(OpWalrusPlayer player in All.OfType<OpWalrusPlayer>())
+			{
+				if ( player.role == OpWalrusGameInfo.Role.Prisoner )
+				{
+					foundAnyPrisoners = true;
+					if ( !spectators.Contains( player ) )
+					{
+						foundALivingPrisoner = true;
+					}
+				}
+				else
+				{
+					foundAnyGuards = true;
+					if ( !spectators.Contains( player ) )
+					{
+						foundALivingGuard = true;
+					}
+				}
+			}
+
+			if ( foundAnyGuards && !foundALivingGuard )
+			{
+				goToNextGameState();
+				winningTeam = Team.Prisoners;
+				didChangeGameState = true;
+			}
+			else if ( foundAnyPrisoners && !foundALivingPrisoner )
+			{
+				goToNextGameState();
+				winningTeam = Team.Guards;
+				didChangeGameState = true;
+			}
+			return didChangeGameState;
 		}
 
 		public override void Simulate( Client cl )
@@ -130,6 +136,23 @@ namespace OpWalrus
 					}
 				}
 				
+				switch(gamestate)
+				{
+					case GameState.Playing:
+						//Check if mid-game some players left making the game state invalid
+						if ( !isEnoughPlayers() )
+						{
+							goToNextGameState();
+							return;
+						}
+
+						//Check if mid-game players died or left causing a game-over
+						if(checkWinCondition())
+						{
+							return;
+						}
+						break;
+				}
 
 				if (Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
 				{
