@@ -15,7 +15,9 @@ namespace OpWalrus
 		public float preGameLength = 2f;
 		public float gameLength = 2f;
 		public float postGameLength = 2f;
-		public float prisonerOverGuardRatio = 6f / 1f;
+		public float playersPerGuard = 4f;
+		//For instance, for every 4 players, there is 1 guard (the guard is included)
+		//the amount of guards is +1 so at population (1,3) there is 1 guard, and at (4,7) there is 2. etc.
 
 		[Net] public OpWalrusGameInfo.GameState gamestate { set; get; }
 		[Net] public float lastGameStateChangeTime { get; set; }
@@ -402,44 +404,9 @@ namespace OpWalrus
 					break;
 				case OpWalrusGameInfo.Team.Guards:
 
-					// Im rewriting all of this right now but TLDR: set the team if its a valid request
-					/*
-					int curPrisonerCount = getAllPlayersOfTeam( Team.Prisoners ).Count;
-					int curGuardCount = getAllPlayersOfTeam( Team.Guards ).Count;
-
-					int prisonerCountIfSucceed = curPrisonerCount - 1;
-					int guardCountIfSucceed = curGuardCount + 1;
-
-					bool bypass = false;
-					if(curGuardCount == 0)
-					{
-						bypass = true;
-					}
-
-					float ratio = ((float)prisonerCountIfSucceed) / guardCountIfSucceed;
-					Log.Info( (prisonerCountIfSucceed, guardCountIfSucceed, ratio) );
-					if ( ratio >= prisonerOverGuardRatio || bypass)
-					{
-						bool anyGuards = false;
-						OpWalrusPlayer[] players = All.OfType<OpWalrusPlayer>().ToArray();
-						for(int i = 0; i < players.Length; i++)
-						{
-							if(OpWalrusGameInfo.roleToTeam[players[i].role] == OpWalrusGameInfo.Team.Guards)
-							{
-								anyGuards = true;
-								break;
-							}
-						}
-						if(!anyGuards)
-						{
-							goToNextGameState();
-						}
-
-						player.role = OpWalrusGameInfo.Role.Guard;
-						Log.Info( player.role );
-						succeeded = true;
-					}
-					*/
+					int numOfPlayers = All.OfType<OpWalrusPlayer>().Count();
+					int maxNumOfGuards = (int)(numOfPlayers / playersPerGuard) + 1;
+					
 					player.role = OpWalrusGameInfo.Role.Guard;
 					succeeded = true;
 					break;
