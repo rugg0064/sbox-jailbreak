@@ -86,7 +86,7 @@ namespace OpWalrus
 					//Shirt
 					clothesToAdd.Add( "models/jacket.red.vmdl" );
 					//Shoes
-					clothesToAdd.Add( "model/trainers.vmdl" );
+					clothesToAdd.Add( "models/trainers.vmdl" );
 					break;
 			}
 
