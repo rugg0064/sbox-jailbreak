@@ -23,6 +23,10 @@ namespace OpWalrus
 		[Net] public float lastGameStateChangeTime { get; set; }
 		[Net] public List<OpWalrusPlayer> spectators { set; get; }
 		[Net] public OpWalrusPlayer curWarden { set; get; }
+		[Net] public List<OpWalrusPlayer> speakingList { set; get; }
+		Dictionary<OpWalrusPlayer, float> lastTalkTime { set; get; }
+		[Net] public OpWalrusGameInfo.Team winningTeam { get; set; }
+		float talkTimeDecay = 1f;
 
 		public OpWalrusGame()
 		{
@@ -31,6 +35,8 @@ namespace OpWalrus
 				spectators = new List<OpWalrusPlayer>();
 				gamestate = OpWalrusGameInfo.GameState.EnoughPlayersCheck;
 				lastGameStateChangeTime = Time.Now;
+				speakingList = new List<OpWalrusPlayer>();
+				lastTalkTime = new Dictionary<OpWalrusPlayer, float>();
 
 				new OpWalrusHud();
 				new OpWalrusCrosshairHud();
@@ -99,10 +105,12 @@ namespace OpWalrus
 				if(foundAnyGuards && !foundALivingGuard)
 				{
 					goToNextGameState();
+					winningTeam = Team.Prisoners;
 				}
 				else if ( foundAnyPrisoners && !foundALivingPrisoner )
 				{
 					goToNextGameState();
+					winningTeam = Team.Guards;
 				}
 
 			}
@@ -113,7 +121,17 @@ namespace OpWalrus
 			base.Simulate( cl );
 			if ( IsServer )
 			{
-				if(Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
+				speakingList.Clear();
+				foreach ( OpWalrusPlayer player in All.OfType<OpWalrusPlayer>() )
+				{
+					if ( lastTalkTime.ContainsKey( player ) && Time.Now < lastTalkTime[player] + talkTimeDecay )
+					{
+						speakingList.Add( player );
+					}
+				}
+				
+
+				if (Time.Now > lastGameStateChangeTime + OpWalrusGameInfo.gameStateLengths[gamestate])
 				{
 					goToNextGameState();
 				}
@@ -285,9 +303,16 @@ namespace OpWalrus
 			return playersOfTeam;
 		}
 
+
 		public override bool CanHearPlayerVoice( Client source, Client dest )
 		{
+			Log.Info( (source, dest) );
 			Host.AssertServer();
+			if(spectators.Contains((OpWalrusPlayer)source.Pawn))
+			{
+				return false;
+			}
+			lastTalkTime[(OpWalrusPlayer)source.Pawn] = Time.Now;
 			return true;
 		}
 

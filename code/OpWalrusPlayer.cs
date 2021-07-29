@@ -19,6 +19,8 @@ namespace OpWalrus
 
 		public override void Respawn()
 		{
+			base.Respawn();
+
 			SetModel( "models/citizen/citizen.vmdl" );
 
 			Controller = new WalkController();
@@ -32,7 +34,6 @@ namespace OpWalrus
 			EnableHideInFirstPerson = true;
 			EnableShadowInFirstPerson = true;
 
-			base.Respawn();
 
 			dressToTeam();
 

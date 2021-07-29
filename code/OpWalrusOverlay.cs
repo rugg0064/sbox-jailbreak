@@ -12,6 +12,8 @@ namespace OpWalrus
 		Label hpIndicator;
 		Label teamIndicator;
 		Label currentWardenIndicator;
+		Label peopleTalkingIndicator;
+		Label youAreLookingAtIndicator;
 		public OpWalrusOverlay()
 		{ 
 			StyleSheet.Load( "OpWalrusHud.scss" );
@@ -48,6 +50,14 @@ namespace OpWalrus
 			currentWardenIndicator = new Label();
 			currentWardenIndicator.AddClass( "currentWardenIndicator" );
 			currentWardenIndicator.Parent = container;
+
+			peopleTalkingIndicator = new Label();
+			peopleTalkingIndicator.AddClass( "peopleTalkingIndicator" );
+			peopleTalkingIndicator.Parent = container;
+
+			youAreLookingAtIndicator = new Label();
+			youAreLookingAtIndicator.AddClass( "youAreLookingAtIndicator" );
+			youAreLookingAtIndicator.Parent = container;
 		}
 
 		public override void Tick()
@@ -77,6 +87,29 @@ namespace OpWalrus
 				currentWardenIndicator.SetText( "Current Warden: " + "None");
 			}
 
+			string talking = "Players talking: ";
+
+			for(int i = 0; i < game.speakingList.Count; i++ )
+			{
+				talking += game.speakingList[i].GetClientOwner().Name;
+				if( i != game.speakingList.Count - 1)
+				{
+					talking += ", ";
+				}
+			}
+			peopleTalkingIndicator.SetText( talking );
+
+			
+			OpWalrusPlayer localPlayer = (OpWalrusPlayer)Local.Pawn;
+			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Camera);
+			TraceResult tr = Trace.Ray( localCamera.Pos, localCamera.Pos + (localCamera.Rot.Forward * 2048) ).Ignore( localPlayer ).Run();
+			string lookingAtText = "Looking at: ";
+			
+			if(tr.Entity != null && tr.Entity is OpWalrusPlayer otherPlayer)
+			{
+				lookingAtText += otherPlayer.GetClientOwner().Name;
+			}
+			youAreLookingAtIndicator.SetText( lookingAtText );
 		}
 	}
 }
