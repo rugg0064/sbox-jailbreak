@@ -256,13 +256,6 @@ namespace OpWalrus
 			return true;
 		}
 
-		public void setGameState( OpWalrusGameInfo.GameState newGameState)
-		{
-			Log.Info( "Setting game state to: " + newGameState );
-			gamestate = newGameState;
-			lastGameStateChangeTime = Time.Now;
-		}
-
 		public List<OpWalrusPlayer> getAllPlayersOfRole( OpWalrusGameInfo.Role role )
 		{
 			IEnumerable<OpWalrusPlayer> players = All.OfType<OpWalrusPlayer>();
@@ -296,92 +289,6 @@ namespace OpWalrus
 		{
 			Host.AssertServer();
 			return true;
-		}
-
-		[ServerCmd( "getTeam" )]
-		public static void getTeam( string playerName )
-		{
-			Log.Info( "Team of: " + playerName );
-
-			OpWalrusPlayer player = OpWalrusUtils.getPlayerByName( All, playerName );
-
-			if ( player != null )
-			{
-				Log.Info( OpWalrusGameInfo.roleToTeam[player.role] );
-			}
-			else
-			{
-				Log.Info( "Couldn't find player, ensure its typed exactly as the player's name." );
-			}
-		}
-
-		[ServerCmd( "setRole" )]
-		public static void setTeam( string playerName, string role )
-		{
-			OpWalrusPlayer player = OpWalrusUtils.getPlayerByName( All, playerName );
-			OpWalrusGameInfo.Role roleToSet = OpWalrusGameInfo.Role.Prisoner;
-
-			OpWalrusGameInfo.Role[] roles = Enum.GetValues<OpWalrusGameInfo.Role>();
-			bool found = false;
-			for ( int i = 0; i < roles.Length && !found; i++ )
-			{
-				if ( role.Equals( roles[i].ToString() ) )
-				{
-					roleToSet = roles[i];
-					found = true;
-				}
-			}
-
-			if ( player != null && found )
-			{
-				player.role = roleToSet;
-				Log.Info( "Set role." );
-			}
-			else
-			{
-				Log.Info( "Couldn't set role." );
-			}
-		}
-
-		[ServerCmd( "getRole" )]
-		public static void getRole( string playerName )
-		{
-			Log.Info( "Role of: " + playerName );
-			OpWalrusPlayer player = OpWalrusUtils.getPlayerByName( All, playerName );
-
-			if ( player != null )
-			{
-				Log.Info( player.role );
-			}
-			else
-			{
-				Log.Info( "Couldn't find player, ensure its typed exactly as the player's name." );
-			}
-		}
-
-		[ServerCmd( "getSpectators" )]
-		public static void getSpectators()
-		{
-			IList<OpWalrusPlayer> spectators = ((OpWalrusGame)Game.Current).spectators;
-			for ( int i = 0; i < spectators.Count; i++ )
-			{
-				Log.Info( spectators[i].GetClientOwner().Name );
-			}
-		}
-
-		[ServerCmd( "trySwitchTeam" )]
-		public static void trySwitchTeamCmd(string team)
-		{
-			OpWalrusGameInfo.Team[] teams = Enum.GetValues<OpWalrusGameInfo.Team>();
-			bool found = false;
-			for (int i = 0; i < teams.Length && !found; i++ )
-			{
-				if( team.Equals(teams[i].ToString()) )
-				{
-					found = true;
-					((OpWalrusGame)Game.Current).trySwitchTeam( (OpWalrusPlayer) (ConsoleSystem.Caller.Pawn) , teams[i] );
-				}
-			}
 		}
 
 		public bool trySwitchTeam( OpWalrusPlayer player, OpWalrusGameInfo.Team wishTeam)
