@@ -157,7 +157,6 @@ namespace OpWalrus
 					{
 						TraceResult tr = Trace.Ray( EyePos, EyePos + EyeRot.Forward * 2048 ).Ignore( this ).Run();
 						OpWalrusGame.createPing( tr.EndPos, tr.Normal );
-						DebugOverlay.Line( tr.EndPos, tr.EndPos + tr.Normal * 64, 5.0f, true );
 					}
 				}
 				

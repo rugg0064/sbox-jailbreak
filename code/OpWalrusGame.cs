@@ -3,6 +3,7 @@ using Sandbox;
 using Sandbox.UI.Construct;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -21,7 +22,7 @@ namespace OpWalrus
 		//the amount of guards is +1 so at population (1,3) there is 1 guard, and at (4,7) there is 2. etc.
 		ModelEntity curPing;
 		float pingCreationTime;
-		float pingLifespan = 10f;
+		float pingLifespan = 5f;
 
 		[Net] public OpWalrusGameInfo.GameState gamestate { set; get; }
 		[Net] public float lastGameStateChangeTime { get; set; }
@@ -131,7 +132,7 @@ namespace OpWalrus
 			base.Simulate( cl );
 			if ( IsServer )
 			{
-				if(Time.Now > pingCreationTime + pingLifespan)
+				if (Time.Now > pingCreationTime + pingLifespan)
 				{
 					if(curPing != null && curPing.IsValid())
 					{
@@ -197,6 +198,15 @@ namespace OpWalrus
 				game.curPing.Spawn();
 				game.curPing.Scale = 0.25f;
 				game.curPing.Position = position;
+
+				float rad2Deg = 360 / (MathF.PI * 2);
+				float horizDistance = MathF.Sqrt( (normal.x * normal.x) + (normal.y * normal.y) );
+				float pitch = rad2Deg * MathF.Atan2( horizDistance, normal.z );
+				float yaw   = rad2Deg * MathF.Atan2( normal.y,      normal.x );
+				float roll  = 0;
+				Angles angles = new Angles( pitch, yaw, roll );
+				game.curPing.Rotation = Rotation.From( angles );
+
 				game.pingCreationTime = Time.Now;
 			}
 		}
