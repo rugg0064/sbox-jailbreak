@@ -418,7 +418,6 @@ namespace OpWalrus
 
 		public override bool CanHearPlayerVoice( Client source, Client dest )
 		{
-			Log.Info( (source, dest) );
 			Host.AssertServer();
 			if(spectators.Contains((OpWalrusPlayer)source.Pawn))
 			{
