@@ -77,7 +77,7 @@ namespace OpWalrus
 			float d = OpWalrusGameInfo.gameStateLengths[game.gamestate];
 
 			//timeLeftIndicator.SetText( "Time left: " + (d + lct - tn) );
-			timeLeftIndicator.SetText( "2:30" );
+			timeLeftIndicator.SetText( FormatTimer( (d + lct - tn) ) );
 			float hp = ((OpWalrusPlayer)Local.Pawn).Health;
 			hpIndicator.SetText( "+ " + hp);
 
@@ -170,6 +170,20 @@ namespace OpWalrus
 		{
 			topIndicator.SetClass( "guard", false );
 			topIndicator.SetClass( "prisoner", false );
+		}
+		
+		public string FormatTimer(float time)
+		{
+			int secs = MathX.CeilToInt( time );
+			float mins = secs / 60;
+			int roundMins = MathX.FloorToInt( mins );
+			int minsSecs = secs - roundMins*60;
+			string secPortion = minsSecs.ToString();
+			if (minsSecs < 10)
+			{
+				secPortion = "0" + secPortion;
+			}
+			return roundMins + ":" + secPortion;
 		}
 
 		private void RefreshTalkers()
