@@ -19,6 +19,9 @@ namespace OpWalrus
 		public float playersPerGuard = 4f;
 		//For instance, for every 4 players, there is 1 guard (the guard is included)
 		//the amount of guards is +1 so at population (1,3) there is 1 guard, and at (4,7) there is 2. etc.
+		ModelEntity curPing;
+		float pingCreationTime;
+		float pingLifespan = 10f;
 
 		[Net] public OpWalrusGameInfo.GameState gamestate { set; get; }
 		[Net] public float lastGameStateChangeTime { get; set; }
@@ -128,6 +131,15 @@ namespace OpWalrus
 			base.Simulate( cl );
 			if ( IsServer )
 			{
+				if(Time.Now > pingCreationTime + pingLifespan)
+				{
+					if(curPing != null && curPing.IsValid())
+					{
+						curPing.Delete();
+					}
+				}
+
+
 				speakingList.Clear();
 				foreach ( OpWalrusPlayer player in All.OfType<OpWalrusPlayer>() )
 				{
@@ -163,6 +175,29 @@ namespace OpWalrus
 				{
 					simulateGameState();
 				}
+			}
+		}
+
+		[ServerCmd]
+		public static void createPing(Vector3 position, Vector3 normal)
+		{
+			OpWalrusGame game = (OpWalrusGame)Game.Current;
+			OpWalrusPlayer player = (OpWalrusPlayer)ConsoleSystem.Caller.Pawn;
+
+			if (player.role == Role.Warden)
+			{
+				if ( game.curPing != null && game.curPing.IsValid())
+				{
+					game.curPing.Delete();
+				}
+
+				game.curPing = Library.Create<ModelEntity>();
+				game.curPing.Position = position;
+				game.curPing.SetModel( "models/ping/pingsystem" );
+				game.curPing.Spawn();
+				game.curPing.Scale = 0.25f;
+				game.curPing.Position = position;
+				game.pingCreationTime = Time.Now;
 			}
 		}
 
