@@ -33,7 +33,7 @@ namespace OpWalrus
 		public override void Tick()
 		{
 			base.Tick();
-			if (player != null)
+			if (player != null && player.IsValid())
 			{
 				playerName.Text = player.GetClientOwner().Name;
 				deadIndicator.SetClass( "visible", player.Health <= 0 );
