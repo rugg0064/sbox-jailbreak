@@ -1,0 +1,155 @@
+.overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.topContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 0px;
+  width: 100%;
+  //left: 50%;
+  margin: 0 auto;
+  align-items: center;
+}
+
+// a few colors:
+// guard accent: rgb(52, 140, 255)
+// prisoner accent: rgb(223, 124, 11)
+// warden accent: rgb(0, 60, 255)
+
+.topIndicator {
+  display: flex;
+  font-family: poppins;
+  font-size: 20px;
+  flex-direction: column;
+  //position: relative;
+  background-color: rgb(63, 63, 63);
+  flex-grow: 0;
+  color: white;
+  border-radius: 0px 0px 10px 10px;
+  padding: 10px 20px;
+  border-bottom: 3px solid rgba(black, 0.5);
+}
+
+.lookingAtIndicator {
+  font-family: poppins;
+  display: flex;
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  width: 100%;
+  top: 60%;
+  //left: 50%;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: auto;
+}
+
+.talkingContainer {
+  position: absolute;
+  left: 40px;
+  bottom: 150px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.talkingIndicator {
+  background-color: rgba(black, 0.5);
+  color: white;
+  font-family: poppins;
+  font-size: 17px;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.talkingIndicator .talkingLabel {
+  color: rgb(127, 127, 127);
+  margin-right: 7px;
+}
+
+.talkingIndicator.guard {
+  border-left: 5px solid rgb(52, 140, 255);
+}
+
+.talkingIndicator.prisoner {
+  border-left: 5px solid rgb(223, 124, 11);
+}
+
+.topIndicator.guard {
+  background-color: rgb(52, 140, 255);
+}
+
+.topIndicator.prisoner {
+  background-color: rgb(223, 124, 11);
+}
+
+.timeLeftIndicator {
+  color: white;
+  font-family: poppins;
+  font-size: 23px;
+}
+
+.hpIndicator {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  color: white;
+  font-family: poppins;
+  font-size: 50px;
+  background-color: rgba(black, 0.5);
+  padding: 0 10px;
+  border-radius: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.currentWardenIndicator {
+  position: absolute;
+  color: white;
+  font-size: 16px;
+  border-radius: 100%;
+  padding: 3px 10px;
+  font-family: poppins;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+
+}
+
+.indicatorDead {
+  color: red;
+  font-weight: bold;
+  display: none;
+  margin-right: 7px;
+}
+
+.indicatorDead.visible {
+  display: inherit;
+}
+
+.indicatorRole {
+  color: white;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.indicatorRole.warden {
+  color: rgb(61, 107, 255);
+}
+
+.indicatorRole.guard {
+  color: rgb(52, 140, 255);
+}
+
+.indicatorRole.prisoner {
+  color: rgb(223, 124, 11);
+}
