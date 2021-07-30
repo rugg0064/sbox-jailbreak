@@ -16,6 +16,10 @@ namespace OpWalrus
 		Label peopleTalkingIndicator;
 		OpWalrusPlayerLabel lookingAtIndicator;
 
+		int TalkersCount = 0;
+
+		Panel talkingContainer;
+
 		public OpWalrusNewHud()
 		{ 
 			StyleSheet.Load( "OpWalrusNewHud.scss" );
@@ -56,6 +60,10 @@ namespace OpWalrus
 			lookingAtIndicator = new OpWalrusPlayerLabel();
 			lookingAtIndicator.AddClass( "lookingAtIndicator" );
 			lookingAtIndicator.Parent = this;
+
+			talkingContainer = new Panel();
+			talkingContainer.AddClass( "talkingContainer" );
+			talkingContainer.Parent = this;
 		}
 
 		public override void Tick()
@@ -134,19 +142,15 @@ namespace OpWalrus
 					break;
 			}
 
-			string talking = "Players talking: ";
 
-			for(int i = 0; i < game.speakingList.Count; i++ )
+			//Log.Error( game.speakingList.Count );
+			if ( TalkersCount != game.speakingList.Count )
 			{
-				talking += game.speakingList[i].GetClientOwner().Name;
-				if( i != game.speakingList.Count - 1)
-				{
-					talking += ", ";
-				}
+				RefreshTalkers();
+				TalkersCount = game.speakingList.Count;
 			}
-			peopleTalkingIndicator.SetText( talking );
 
-			
+
 			OpWalrusPlayer localPlayer = (OpWalrusPlayer)Local.Pawn;
 			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Camera);
 			TraceResult tr = Trace.Ray( localCamera.Pos, localCamera.Pos + (localCamera.Rot.Forward * 2048) ).Ignore( localPlayer ).Run();
@@ -166,6 +170,31 @@ namespace OpWalrus
 		{
 			topIndicator.SetClass( "guard", false );
 			topIndicator.SetClass( "prisoner", false );
+		}
+
+		private void RefreshTalkers()
+		{
+			OpWalrusGame game = (OpWalrusGame)Game.Current;
+			talkingContainer.DeleteChildren();
+
+			for ( int i = 0; i < game.speakingList.Count; i++ )
+			{
+				OpWalrusPlayer speaker = game.speakingList[i];
+				Log.Info( speaker.GetClientOwner().Name );
+				OpWalrusTalkingIndicator newInd = new OpWalrusTalkingIndicator( speaker );
+				switch ( OpWalrusGameInfo.roleToTeam[speaker.role] )
+				{
+					case OpWalrusGameInfo.Team.Prisoners:
+						newInd.AddClass( "prisoner" );
+						break;
+					case OpWalrusGameInfo.Team.Guards:
+						newInd.AddClass( "guard" );
+						break;
+					default:
+						break;
+				}
+				talkingContainer.AddChild( newInd );
+			}
 		}
 	}
 }
