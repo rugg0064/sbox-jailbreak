@@ -10,7 +10,7 @@ namespace OpWalrus
 		Label winlabel;
 		public OpWalrusWinMenu()
 		{
-			StyleSheet.Load( "OpWalrusHud.scss" );
+			StyleSheet.Load( "OpWalrusNewHud.scss" );
 			AddClass( "winOverlay" );
 
 			winlabel = new Label();
@@ -25,13 +25,29 @@ namespace OpWalrus
 			if(curGame.gamestate == OpWalrusGameInfo.GameState.PostGame)
 			{
 				winlabel.SetText( curGame.winningTeam + " win!" );
+				winlabel.SetClass( "visible", true );
+				switch ( curGame.winningTeam )
+				{
+					case OpWalrusGameInfo.Team.Prisoners:
+						winlabel.SetClass( "prisoner", true );
+						break;
+					case OpWalrusGameInfo.Team.Guards:
+						winlabel.SetClass( "guard", true );
+						break;
+					default:
+						break;
+				}
 			}
 			else
 			{
 				winlabel.SetText( "" );
+				winlabel.SetClass( "guard", false );
+				winlabel.SetClass( "prisoner", false );
+				winlabel.SetClass( "visible", false );
 			}
 
 			base.Tick();
+
 		}
 	}
 }
