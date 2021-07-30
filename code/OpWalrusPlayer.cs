@@ -7,6 +7,8 @@ namespace OpWalrus
 {
 	public partial class OpWalrusPlayer : Player
 	{
+		private DamageInfo lastDamage;
+
 		[Net] public OpWalrusGameInfo.Role role { get; set; }
 		[Net] public bool optinWarden { get; set; }
 		List<ModelEntity> clothes;		
@@ -221,7 +223,24 @@ namespace OpWalrus
 			Game.Current?.OnKilled( this );
 
 			//LifeState = LifeState.Dead;
+			BecomeRagdollOnClient( Velocity, lastDamage.Flags, lastDamage.Position, lastDamage.Force, GetHitboxBone( lastDamage.HitboxIndex ) );
 			StopUsing();
+		}
+
+		public override void TakeDamage( DamageInfo info )
+		{
+			/*if ( GetHitboxGroup( info.HitboxIndex ) == 1 )
+			{
+				info.Damage *= 10.0f;
+			}*/
+			// above is the headshot code from sandbox, uncomment for headshots
+
+			lastDamage = info;
+
+			//TookDamage( lastDamage.Flags, lastDamage.Position, lastDamage.Force );
+			// this was a rpc call to a function with nothing in it
+
+			base.TakeDamage( info );
 		}
 
 		[ServerCmd( "setSpectator" )]
