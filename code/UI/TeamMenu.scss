@@ -57,7 +57,7 @@
             width: 50%;
             background-color: rgba( #111, 0.7 );
             border-radius: 20px 20px 20px 20px;
-            background-image: url('https://i.redd.it/144nac4n8ek51.jpg');
+            background-image: url('/code/UI/guard.png');
             background-size: cover;
             transition: transform 0.10s ease;
 
@@ -84,7 +84,7 @@
             cursor: pointer;
             background-color: rgba( #111, 0.7 );
             border-radius: 20px 20px 20px 20px;
-            background-image: url('https://cdn5.vectorstock.com/i/1000x1000/01/59/prisoner-vector-540159.jpg');
+            background-image: url('/code/UI/prisoner.png');
             transition: transform 0.10s ease;
 
             &:hover {
