@@ -62,6 +62,7 @@
 
 .talkingIndicator {
   background-color: rgba(black, 0.5);
+  backdrop-filter: blur(10px);
   color: white;
   font-family: poppins;
   font-size: 17px;
@@ -106,6 +107,7 @@
   background-color: rgba(black, 0.5);
   padding: 0 10px;
   border-radius: 10px;
+  backdrop-filter: blur(10px);
 }
 
 .hidden {
@@ -122,6 +124,7 @@
   top: 20px;
   left: 20px;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
 
 }
 
@@ -152,4 +155,48 @@
 
 .indicatorRole.prisoner {
   color: rgb(223, 124, 11);
+}
+
+.winOverlay {
+	width: 100%;
+	height: 100%;
+
+	justify-content: center;
+	align-items: center;
+
+	.winLabel {
+		font-size: 70px;
+    //width: 100%;
+    overflow: visible;
+    //width: 0;
+    background-color: transparent;
+		text-align: center;
+    color: transparent;
+    font-family: poppins;
+    opacity: 0;
+    background-color: rgba(black, 0.5);
+    color: white;
+    backdrop-filter: blur(10px);
+	}
+
+  .winLabel > * {
+    position: absolute;
+    left: 50%;
+    top: 0;
+  }
+
+  .winLabel.visible {
+    transition: all 1s ease-out;
+    width: 100%;
+    opacity: 1;
+  }
+
+  .winLabel.guard {
+    color: rgb(52, 140, 255);
+  }
+  .winLabel.prisoner {
+    color: rgb(223, 124, 11);
+  }
+
+
 }

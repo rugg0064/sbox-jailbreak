@@ -123,10 +123,13 @@ namespace OpWalrus
 				ResetTopIndicator();
 			}
 
+			timeLeftIndicator.SetClass( "hidden", false );
+
 			switch ( game.gamestate )
 			{
 				case OpWalrusGameInfo.GameState.EnoughPlayersCheck:
 					topIndicator.SetText( "Waiting For Players" );
+					timeLeftIndicator.SetClass( "hidden", true );
 					break;
 				case OpWalrusGameInfo.GameState.Pregame:
 					topIndicator.SetText( "Pregame" );
@@ -141,6 +144,8 @@ namespace OpWalrus
 					topIndicator.SetText( "This text shouldn't show." );
 					break;
 			}
+
+
 
 
 			//Log.Error( game.speakingList.Count );
@@ -194,7 +199,6 @@ namespace OpWalrus
 			for ( int i = 0; i < game.speakingList.Count; i++ )
 			{
 				OpWalrusPlayer speaker = game.speakingList[i];
-				Log.Info( speaker.GetClientOwner().Name );
 				OpWalrusTalkingIndicator newInd = new OpWalrusTalkingIndicator( speaker );
 				switch ( OpWalrusGameInfo.roleToTeam[speaker.role] )
 				{
