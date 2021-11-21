@@ -29,7 +29,7 @@ namespace OpWalrus
 			wardenPanel = Add.Panel( "wardenPanel" );
 			wardenPanel.AddEventListener( "onclick", () =>
 			{
-				OpWalrusPlayer.flipWardenOptin();
+				JBPlayer.flipWardenOptin();
 			} );
 			wardenPanel.Add.Label( "Opt in to warden?", "textA" );
 			wardenText = wardenPanel.Add.Label( "", "textB" );
@@ -46,13 +46,13 @@ namespace OpWalrus
 		{
 			base.Tick();
 
-			OpWalrusPlayer localPlayer = ((OpWalrusPlayer)Local.Pawn);
+			JBPlayer localPlayer = ((JBPlayer)Local.Pawn);
 
 			Parent.SetClass( "teammenuopen", Input.Down( InputButton.Menu ) );
 
 			wardenText.SetText( localPlayer.optinWarden ? "Yes" : "No" );
 			
-			wardenPanel.SetClass( "visible", OpWalrusGameInfo.roleToTeam[localPlayer.role] == OpWalrusGameInfo.Team.Guards );
+			wardenPanel.SetClass( "visible", JBGameInfo.roleToTeam[localPlayer.role] == JBGameInfo.Team.Guards );
 		}
 
 	}

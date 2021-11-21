@@ -18,7 +18,7 @@
 //
 @PointClass base(BaseProperties_sbox_jailbreak) = weapon_pistol : ""
 [
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
 	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
 ]
@@ -28,7 +28,7 @@
 //
 @PointClass base(BaseProperties_sbox_jailbreak) = weapon_shotgun : ""
 [
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
 	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
 ]
@@ -38,7 +38,167 @@
 //
 @PointClass base(BaseProperties_sbox_jailbreak) = weapon_smg : ""
 [
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_WEAPONS.Bayonet
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_bayonet : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_WEAPONS.DEAGLE
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_deagle : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_WEAPONS.FAL
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_fal : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_WEAPONS.L96A1
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_l96a1 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_WEAPONS.SPAS12
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_spas12 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_EXPLOSIVES.RPG7
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_explosives_rpg7 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.AK47
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_ak47 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.AWP
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_awp : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.Deagle
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_deagle : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.GrenadeHE
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_grenade_he : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.Knife
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_knife : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.M249
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_m249 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.M249HE
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_m249_he : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.M4A1
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_m4a1 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.MAC10
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_mac10 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+
+	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
+]
+
+//
+// SWB_CSS.Super90
+//
+@PointClass base(BaseProperties_sbox_jailbreak) = swb_css_super90 : ""
+[
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
 	input SetColor(string) : "Sets the color of this entity. Format is '255 255 255 255'."
 ]
@@ -55,7 +215,7 @@ metadata
 }
 = opwgs : "Spawn a guard here"
 [
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 ]
 
 //
@@ -70,16 +230,16 @@ metadata
 }
 = opwps : "Spawn a prisoner here"
 [
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 ]
 
 //
-// OpWalrus.OpWalrusWeaponSpawner
+// OpWalrus.JBWeaponSpawner
 //
 @PointClass base(BaseProperties_sbox_jailbreak) editormodel( "models/maya_testcube_100.vmdl" ) = wepSpawner : "Spawns weapons according to an input"
 [
 	id(integer) : "Weapon to spawn" : 0 : ""
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
 	input spawnItem(void) : ""
 ]
