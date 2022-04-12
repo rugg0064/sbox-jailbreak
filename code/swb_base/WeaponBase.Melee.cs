@@ -8,29 +8,60 @@ namespace SWB_Base
 {
     public partial class WeaponBaseMelee : WeaponBase
     {
-        public virtual string SwingAnimationHit => ""; // Animation to play for the primary attack
-        public virtual string SwingAnimationMiss => ""; // Animation to play when missing the primary attack
-        public virtual string StabAnimationHit => ""; // Animation to play for the secondary attack
-        public virtual string StabAnimationMiss => ""; // Animation to play when missing the secondary attack
-        public virtual string SwingSound => ""; // Sound to play for the primary attack
-        public virtual string StabSound => ""; // Sound to play for the secondary attack
-        public virtual string MissSound => ""; // Sound to play when missing an attack
-        public virtual string HitWorldSound => ""; // Sound to play when hitting the world
-        public virtual float SwingSpeed => 1f; // Primary attack speed ( lower is faster )
-        public virtual float StabSpeed => 1f; // Secondary attack speed ( lower is faster )
-        public virtual float SwingDamage => 50; // Primary attack damage
-        public virtual float StabDamage => 100; // Secondary attack damage
-        public virtual float SwingForce => 25f; // Primary attack force
-        public virtual float StabForce => 50f; // Secondary attack force
-        public virtual float DamageDistance => 25f; // Attack range
-        public virtual float ImpactSize => 10f; // Attack impact size
+        /// <summary>Animation to play for the primary attack</summary>
+        public virtual string SwingAnimationHit => "";
+
+        /// <summary>Animation to play when missing the primary attack</summary>
+        public virtual string SwingAnimationMiss => "";
+
+        /// <summary>Animation to play for the secondary attack</summary>
+        public virtual string StabAnimationHit => "";
+
+        /// <summary>Animation to play when missing the secondary attack</summary>
+        public virtual string StabAnimationMiss => "";
+
+        /// <summary>Sound to play for the primary attack</summary>
+        public virtual string SwingSound => "";
+
+        /// <summary>Sound to play for the secondary attack</summary>
+        public virtual string StabSound => "";
+
+        /// <summary>Sound to play when missing an attack</summary>
+        public virtual string MissSound => "";
+
+        /// <summary>Sound to play when hitting the world</summary>
+        public virtual string HitWorldSound => "";
+
+        /// <summary>Primary attack speed (lower is faster)</summary>
+        public virtual float SwingSpeed => 1f;
+
+        /// <summary>Secondary attack speed (lower is faster)</summary>
+        public virtual float StabSpeed => 1f;
+
+        /// <summary>Primary attack damage</summary>
+        public virtual float SwingDamage => 50;
+
+        /// <summary>Secondary attack damage</summary>
+        public virtual float StabDamage => 100;
+
+        /// <summary>Primary attack force</summary>
+        public virtual float SwingForce => 25f;
+
+        /// <summary>Secondary attack force</summary>
+        public virtual float StabForce => 50f;
+
+        /// <summary>Attack range</summary>
+        public virtual float DamageDistance => 25f;
+
+        /// <summary>Attack impact size</summary>
+        public virtual float ImpactSize => 10f;
 
         public override void Reload() { }
 
         [ClientRpc]
         public virtual void DoMeleeEffects(string animation, string sound)
         {
-            ViewModelEntity?.SetAnimBool(animation, true);
+            ViewModelEntity?.SetAnimParameter(animation, true);
             PlaySound(sound);
         }
 
@@ -40,8 +71,8 @@ namespace SWB_Base
             TimeSinceSecondaryAttack = 0;
 
             var hitEntity = true;
-            var pos = Owner.EyePos;
-            var forward = Owner.EyeRot.Forward;
+            var pos = Owner.EyePosition;
+            var forward = Owner.EyeRotation.Forward;
             var trace = Trace.Ray(pos, pos + forward * DamageDistance)
                 .Ignore(this)
                 .Ignore(Owner)
@@ -56,13 +87,13 @@ namespace SWB_Base
             }
 
             DoMeleeEffects(hitAnimation, sound);
-            (Owner as AnimEntity).SetAnimBool("b_attack", true);
+            (Owner as AnimEntity).SetAnimParameter("b_attack", true);
 
             if (!hitEntity || !IsServer) return;
 
             using (Prediction.Off())
             {
-                var damageInfo = DamageInfo.FromBullet(trace.EndPos, forward * force, damage)
+                var damageInfo = DamageInfo.FromBullet(trace.EndPosition, forward * force, damage)
                     .UsingTraceResult(trace)
                     .WithAttacker(Owner)
                     .WithWeapon(this);

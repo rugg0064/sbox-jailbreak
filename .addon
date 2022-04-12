@@ -1,5 +1,18 @@
 {
-    "sharedassets": "*.*",
-    "type": "game",
-    "ident":  "rugg.jailbreak"
+  "Title": "Sbox Jailbreak",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "sbox-jailbreak",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": null,
+  "HasCode": true,
+  "CodePath": "code",
+  "RootNamespace": "Sandbox",
+  "Metadata": {
+    "MapList": [
+      "facepunch.construct"
+    ]
+  }
 }

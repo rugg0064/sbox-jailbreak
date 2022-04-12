@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandbox.UI;
+using SWB_Base.UI;
 
 /* 
  * Weapon base UI
@@ -12,12 +13,16 @@ namespace SWB_Base
     {
         private Panel healthDisplay;
         private Panel ammoDisplay;
+        private Panel customizationMenu;
 
         private Panel hitmarker;
 
         public override void CreateHudElements()
         {
-            if (Local.Hud == null) return;
+            var showHUDCL = GetSetting<bool>("swb_cl_showhud", true);
+            var showHUDSV = GetSetting<bool>("swb_sv_showhud", true);
+
+            if (Local.Hud == null || !showHUDCL || !showHUDSV) return;
 
             if (UISettings.ShowCrosshair)
             {
@@ -59,6 +64,27 @@ namespace SWB_Base
             if (healthDisplay != null) healthDisplay.Delete(true);
             if (ammoDisplay != null) ammoDisplay.Delete(true);
             if (hitmarker != null) hitmarker.Delete(true);
+            if (customizationMenu != null) customizationMenu.Delete();
+        }
+
+        public void UISimulate(Client player)
+        {
+            // Cutomization menu
+            if (EnableCustomizationSV > 0 && Input.Pressed(InputButton.Menu) && AttachmentCategories != null)
+            {
+                if (customizationMenu == null)
+                {
+                    customizationMenu = new CustomizationMenu();
+                    customizationMenu.Parent = Local.Hud;
+                }
+                else
+                {
+                    customizationMenu.Delete();
+                    customizationMenu = null;
+                }
+            }
+
+            IsCustomizing = customizationMenu != null;
         }
     }
 }

@@ -33,7 +33,7 @@ public class ViewModel : BaseViewModel
 		Position = camSetup.Position;
 		Rotation = camSetup.Rotation;
 
-		camSetup.ViewModel.FieldOfView = FieldOfView;
+		//camSetup.ViewModel.FieldOfView = FieldOfView;
 
 		var newPitch = Rotation.Pitch();
 		var newYaw = Rotation.Yaw();

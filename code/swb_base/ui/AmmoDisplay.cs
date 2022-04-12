@@ -4,7 +4,7 @@ using Sandbox.UI;
 using Sandbox.UI.Construct;
 using SWB_Base;
 
-namespace SWB_Base
+namespace SWB_Base.UI
 {
     public class AmmoDisplay : Panel
     {
@@ -80,7 +80,7 @@ namespace SWB_Base
 
                 if (hasClipSize)
                 {
-                    if (weapon.Primary.InfiniteAmmo == InfiniteAmmoType.normal)
+                    if (weapon.Primary.InfiniteAmmo == 0)
                     {
                         reserveLabel.SetText("|" + reserveAmmo);
                         reserveLabel.Style.FontColor = reserveAmmo == 0 ? emptyColor : reserveColor;

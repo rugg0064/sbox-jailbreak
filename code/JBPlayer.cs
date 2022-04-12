@@ -32,7 +32,7 @@ namespace OpWalrus
 
 			Animator = new StandardPlayerAnimator();
 
-			Camera = new FirstPersonCamera();
+			CameraMode = new FirstPersonCamera();
 
 			EnableAllCollisions = true;
 			EnableDrawing = true;
@@ -135,11 +135,11 @@ namespace OpWalrus
 					{
 						Entity activeEntity = Inventory.GetSlot( activeSlot );
 						activeEntity.Spawn();
-						activeEntity.Position = EyePos + EyeRot.Forward * 48;
+						activeEntity.Position = EyePosition + EyeRotation.Forward * 48;
 
 						Inventory.Drop( activeEntity );
 
-						activeEntity.Velocity += EyeRot.Forward * 400;
+						activeEntity.Velocity += EyeRotation.Forward * 400;
 					}
 				}
 
@@ -159,8 +159,8 @@ namespace OpWalrus
 				{
 					if ( Input.Pressed( InputButton.Flashlight ) && IsClient)
 					{
-						TraceResult tr = Trace.Ray( EyePos, EyePos + EyeRot.Forward * 2048 ).Ignore( this ).Run();
-						JBGame.createPing( tr.EndPos, tr.Normal );
+						TraceResult tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 2048 ).Ignore( this ).Run();
+						JBGame.createPing( tr.EndPosition, tr.Normal );
 					}
 				}
 				

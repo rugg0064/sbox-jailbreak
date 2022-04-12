@@ -28,7 +28,7 @@ partial class Pistol : Weapon
 		TimeSincePrimaryAttack = 0;
 		TimeSinceSecondaryAttack = 0;
 		
-		(Owner as AnimEntity)?.SetAnimBool( "b_attack", true );
+		//(Owner as AnimEntity)?.SetAnimBool( "b_attack", true );
 
 		ShootEffects();
 		PlaySound( "rust_pistol.shoot" );

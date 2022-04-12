@@ -35,7 +35,7 @@ namespace OpWalrus
 			base.Tick();
 			if (player != null && player.IsValid())
 			{
-				playerName.Text = player.GetClientOwner().Name;
+				playerName.Text = player.Client.Name;
 				deadIndicator.SetClass( "visible", player.Health <= 0 );
 				roleIndicator.RemoveClass( "warden" );
 				roleIndicator.RemoveClass( "prisoner" );

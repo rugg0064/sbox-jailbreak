@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 
-namespace SWB_Base
+namespace SWB_Base.UI
 {
     public static class PanelUtils
     {
@@ -14,8 +14,8 @@ namespace SWB_Base
         {
             if (!player.IsValid()) return;
 
-            var eyePos = player.EyePos;
-            var eyeRot = player.EyeRot;
+            var eyePos = player.EyePosition;
+            var eyeRot = player.EyeRotation;
 
             var tr = Trace.Ray(eyePos, eyePos + eyeRot.Forward * 2000)
                             .Size(1.0f)
@@ -23,7 +23,7 @@ namespace SWB_Base
                             .UseHitboxes()
                             .Run();
 
-            panel.PositionAtWorld(tr.EndPos, centered);
+            panel.PositionAtWorld(tr.EndPosition, centered);
         }
 
         public static void PositionAtWorld(this Panel panel, Vector3 pos, bool centered = true)

@@ -13,7 +13,7 @@ namespace OpWalrus
 			for ( int i = 0; i < players.Length; i++ )
 			{
 				JBPlayer player = players[i];
-				if ( player.GetClientOwner().Name.Equals( playerName ) )
+				if ( player.Client.Name.Equals( playerName ) )
 				{
 					return player;
 				}

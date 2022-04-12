@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Sandbox;
 using Sandbox.UI;
 
-namespace SWB_Base
+namespace SWB_Base.UI
 {
 
     public class Crosshair : Panel
@@ -76,16 +76,16 @@ namespace SWB_Base
             base.Tick();
             this.PositionAtCrosshair();
 
-            var player = Local.Pawn;
+            var player = Local.Pawn as PlayerBase;
             if (player == null) return;
 
             var weapon = player.ActiveChild as WeaponBase;
             bool isValidWeapon = weapon != null;
 
-            var hideCrosshairDot = isValidWeapon ? !weapon.UISettings.ShowCrosshairDot : true;
+            var hideCrosshairDot = !isValidWeapon || !weapon.UISettings.ShowCrosshairDot || weapon.IsCustomizing;
             CenterDot.SetClass("hideCrosshair", hideCrosshairDot);
 
-            var hideCrosshairLines = isValidWeapon ? !weapon.UISettings.ShowCrosshairLines : true;
+            var hideCrosshairLines = !isValidWeapon || !weapon.UISettings.ShowCrosshairLines || weapon.IsCustomizing;
             LeftBar.SetClass("hideCrosshair", hideCrosshairLines);
             RightBar.SetClass("hideCrosshair", hideCrosshairLines);
             TopBar.SetClass("hideCrosshair", hideCrosshairLines);
@@ -146,6 +146,7 @@ namespace SWB_Base
         {
             await GameTask.DelaySeconds(delay);
             RestoreBarPositions();
+            RestoreCrosshairOpacity();
         }
     }
 }

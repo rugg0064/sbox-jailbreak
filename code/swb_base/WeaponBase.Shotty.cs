@@ -9,11 +9,20 @@ namespace SWB_Base
 {
     public partial class WeaponBaseShotty : WeaponBase
     {
-        public virtual float ShellReloadTimeStart => -1; // Duration of the reload start animation
-        public virtual float ShellReloadTimeInsert => -1; // Duration of the reload insert animation
-        public virtual float ShellEjectDelay => -1; // The shell eject delay after firing
-        public virtual string ReloadFinishAnim => "reload_finished"; // Finishing reload animation
-        public virtual bool CanShootDuringReload => true; // Can the shotgun shoot while reloading
+        /// <summary>Duration of the reload start animation</summary>
+        public virtual float ShellReloadTimeStart => -1;
+
+        /// <summary>Duration of the reload insert animatio</summary>
+        public virtual float ShellReloadTimeInsert => -1;
+
+        /// <summary>The shell eject delay after firing</summary>
+        public virtual float ShellEjectDelay => -1;
+
+        /// <summary>Animation for finishing the reload</summary>
+        public virtual string ReloadFinishAnim => "reload_finished";
+
+        /// <summary>Can the shotgun shoot while reloading</summary>
+        public virtual bool CanShootDuringReload => true;
 
         public override bool BulletCocking => false;
 
@@ -40,7 +49,8 @@ namespace SWB_Base
 
         public async Task EjectShell(string bulletEjectParticle)
         {
-            var activeWeapon = Owner.ActiveChild;
+            var player = Owner as PlayerBase;
+            var activeWeapon = player.ActiveChild;
             var instanceID = InstanceID;
 
             await GameTask.DelaySeconds(ShellEjectDelay);
@@ -50,7 +60,7 @@ namespace SWB_Base
 
         public override void Reload()
         {
-            Primary.ReloadTime = ShellReloadTimeStart;
+            General.ReloadTime = ShellReloadTimeStart;
             base.Reload();
         }
 
@@ -79,12 +89,12 @@ namespace SWB_Base
 
                 if (ammo != 0 && Primary.Ammo < Primary.ClipSize)
                 {
-                    Primary.ReloadTime = ShellReloadTimeInsert;
+                    General.ReloadTime = ShellReloadTimeInsert;
                     base.Reload();
                 }
                 else
                 {
-                    StartReloadEffects(false, Primary.ReloadAnim);
+                    StartReloadEffects(false, General.ReloadAnim);
                     _ = FinishReload();
                 }
             }
@@ -92,7 +102,8 @@ namespace SWB_Base
 
         public async Task FinishReload()
         {
-            var activeWeapon = Owner.ActiveChild;
+            var player = Owner as PlayerBase;
+            var activeWeapon = player.ActiveChild;
             var instanceID = InstanceID;
 
             await GameTask.DelaySeconds(ShellEjectDelay);

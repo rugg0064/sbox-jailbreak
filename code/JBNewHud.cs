@@ -145,9 +145,6 @@ namespace OpWalrus
 					break;
 			}
 
-
-
-
 			//Log.Error( game.speakingList.Count );
 			if ( TalkersCount != game.speakingList.Count )
 			{
@@ -157,8 +154,8 @@ namespace OpWalrus
 
 
 			JBPlayer localPlayer = (JBPlayer)Local.Pawn;
-			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Camera);
-			TraceResult tr = Trace.Ray( localCamera.Pos, localCamera.Pos + (localCamera.Rot.Forward * 2048) ).Ignore( localPlayer ).Run();
+			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Components.Get<CameraMode>());
+			TraceResult tr = Trace.Ray( localCamera.Position, localCamera.Position + (localCamera.Rotation.Forward * 2048) ).Ignore( localPlayer ).Run();
 
 			
 			if(tr.Entity != null && tr.Entity is JBPlayer otherPlayer)

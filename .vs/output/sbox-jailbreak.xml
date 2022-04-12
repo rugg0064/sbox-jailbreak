@@ -1,0 +1,879 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>sbox-jailbreak</name>
+    </assembly>
+    <members>
+        <member name="T:OpWalrus.JBCrosshairHud">
+            <summary>
+            This is the HUD entity. It creates a RootPanel clientside, which can be accessed
+            via RootPanel on this entity, or Local.Hud.
+            </summary>
+        </member>
+        <member name="T:OpWalrus.JBHud">
+            <summary>
+            This is the HUD entity. It creates a RootPanel clientside, which can be accessed
+            via RootPanel on this entity, or Local.Hud.
+            </summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentCategory.Name">
+            <summary>Display name</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentCategory.Selectable">
+            <summary>If attachments in this category be equipped from the customization menu</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentCategory.BoneOrAttachment">
+            <summary>WIP</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentCategory.Attachments">
+            <summary>List of attachments</summary>
+        </member>
+        <member name="P:SWB_Base.OffsetAttachment.ViewParentBone">
+            <summary>The viewmodel bone to parent the attachment to</summary>
+        </member>
+        <member name="P:SWB_Base.OffsetAttachment.ViewTransform">
+            <summary>The offset to the viewmodel bone</summary>
+        </member>
+        <member name="P:SWB_Base.OffsetAttachment.WorldParentBone">
+            <summary>The worldmodel bone to parent the attachment to</summary>
+        </member>
+        <member name="P:SWB_Base.OffsetAttachment.WorldTransform">
+            <summary>The offset to the worldmodel bone</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.Name">
+            <summary>Display name (needs to be unique)</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.Description">
+            <summary>Display description</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.Positives">
+            <summary>List of positive attributes</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.Negatives">
+            <summary>List of negative attributes</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.IconPath">
+            <summary>Path to an image that represent the attachment on the HUD</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.ModelPath">
+            <summary>Path to the attachment model</summary> 
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.EffectAttachment">
+            <summary>Name of the model attachment used for new effect origins</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.StatModifier">
+            <summary>Weapon stats changer</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.RequiresAttachmentWithName">
+            <summary>Depends on another attachment (e.g. rail/mount)</summary>
+        </member>
+        <member name="P:SWB_Base.AttachmentBase.Enabled">
+            <summary>Will be auto-equipped on first deploy</summary>
+        </member>
+        <member name="M:SWB_Base.AttachmentBase.Equip(SWB_Base.WeaponBase,System.Boolean)">
+            <summary>
+            Equips the attachment
+            </summary>
+            <param name="weapon">Weapon to equip attachment on</param>
+            <param name="createModel">If new attachment models should be created</param>
+            <returns></returns>
+        </member>
+        <member name="M:SWB_Base.AttachmentBase.Unequip(SWB_Base.WeaponBase)">
+            <summary>
+            Unequips the attachment
+            </summary>
+            <param name="weapon">Weapon to unequip attachment from</param>
+        </member>
+        <member name="M:SWB_Base.AttachmentBase.CreateModel(SWB_Base.WeaponBase)">
+            <summary>
+            Creates the view and world attachment models
+            </summary>
+            <param name="weapon">Weapon to parent the attachments to</param>
+            <returns></returns>
+        </member>
+        <member name="M:SWB_Base.AttachmentBase.OnEquip(SWB_Base.WeaponBase,SWB_Base.AttachmentModel)">
+            <summary>
+            Gets called after the attachment is equipped
+            </summary>
+            <param name="weapon">Weapon the attachment was attached to</param>
+            <param name="attachmentModel">The created attachment model</param>
+        </member>
+        <member name="M:SWB_Base.AttachmentBase.OnUnequip(SWB_Base.WeaponBase)">
+            <summary>
+            Gets called after the attachment is unequipped
+            </summary>
+            <param name="weapon">Weapon the attachment was attached to</param>
+        </member>
+        <member name="P:SWB_Base.ActiveAttachment.ViewAttachmentModel">
+            <summary>The viewmodel attachment model (client only)</summary>
+        </member>
+        <member name="P:SWB_Base.ActiveAttachment.WorldAttachmentModel">
+            <summary>The worldmodel attachment model</summary>
+        </member>
+        <member name="P:SWB_Base.ActiveAttachment.Forced">
+            <summary>If the attachment was equipped automatically</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Laser.Particle">
+            <summary>Laser particle</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Laser.Color">
+            <summary>Laser color</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Laser.Range">
+            <summary>Laser length</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Laser.RainbowColor">
+            <summary>Rainbow color override</summary>
+        </member>
+        <member name="F:SWB_Base.Attachments.Sight.ZoomAnimData">
+            <summary>The new zoom offset</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Silencer.MuzzleFlashParticle">
+            <summary>New particle used for the muzzle flash</summary>
+        </member>
+        <member name="P:SWB_Base.Attachments.Silencer.ShootSound">
+            <summary>New sound used for firing</summary>
+        </member>
+        <member name="T:SWB_Base.CarriableBase">
+            <summary>
+            An entity that can be carried in the player's inventory and hands.
+            </summary>
+        </member>
+        <member name="T:SWB_Base.Editor.DropDown">
+            <summary>
+            A UI control which provides multiple options via a dropdown box
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.DropDown.Options">
+            <summary>
+            The options to show on click. You can edit these directly via this property.
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.DropDown.Value">
+            <summary>
+            The current string value. This is useful to have if Selected is null.
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.DropDown.Selected">
+            <summary>
+            The currently selected option
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.DropDown.PopulateOptionsFromType(System.Type)">
+            <summary>
+            Given the type, populate options. This is useful if you're an enum type.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.DropDown.Open">
+            <summary>
+            Open the dropdown
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.DropDown.Select(Sandbox.UI.Option,System.Boolean)">
+            <summary>
+            Select an option
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.DropDown.Select(System.String,System.Boolean)">
+            <summary>
+            Select an option by value string
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.DropDown.OnTemplateElement(Sandbox.Html.INode)">
+            <summary>
+            Give support for option elements in html template
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Popup.Success">
+            <summary>
+            Closes all panels, marks this one as a success and closes it.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Popup.Failure">
+            <summary>
+            Closes all panels, marks this one as a failure and closes it.
+            </summary>
+        </member>
+        <member name="T:SWB_Base.Editor.PopupButton">
+            <summary>
+            A button that opens a popup panel.
+            Useless on its own - you need to implement Open
+            </summary>
+        </member>
+        <member name="T:SWB_Base.Editor.Slider">
+            <summary>
+            A horizontal slider. Can be float or whole number.
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.Slider.MaxValue">
+            <summary>
+            The right side of the slider
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.Slider.MinValue">
+            <summary>
+            The left side of the slider
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.Slider.Step">
+            <summary>
+            If set to 1, value will be rounded to 1's
+            If set to 10, value will be rounded to 10's
+            If set to 0.1, value will be rounded to 0.1's
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.Slider.Value">
+            <summary>
+            The actual value. Setting the value will snap and clamp it.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Slider.ScreenPosToValue(Vector2)">
+            <summary>
+            Convert a screen position to a value. The value is clamped, but not snapped.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Slider.OnMouseMove(Sandbox.UI.MousePanelEvent)">
+            <summary>
+            If we move the mouse while we're being pressed then set the position,
+            but skip transitions.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Slider.OnMouseDown(Sandbox.UI.MousePanelEvent)">
+            <summary>
+            On mouse press jump to that position
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Editor.Slider.UpdateSliderPositions">
+            <summary>
+            Updates the styles for TrackInner and Thumb to position us based on the current value.
+            Note this purposely uses percentages instead of pixels when setting up, this way we don't
+            have to worry about parent size, screen scale etc.
+            </summary>
+        </member>
+        <member name="T:SWB_Base.Editor.SliderEntry">
+            <summary>
+            A horizontal slider with a text entry on the right
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Editor.SliderEntry.Value">
+            <summary>
+            The actual value. Setting the value will snap and clamp it.
+            </summary>
+        </member>
+        <member name="T:SWB_Base.Slider">
+            <summary>
+            A horizontal slider. Can be float or whole number.
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Slider.MaxValue">
+            <summary>
+            The right side of the slider
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Slider.MinValue">
+            <summary>
+            The left side of the slider
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Slider.Step">
+            <summary>
+            If set to 1, value will be rounded to 1's
+            If set to 10, value will be rounded to 10's
+            If set to 0.1, value will be rounded to 0.1's
+            </summary>
+        </member>
+        <member name="P:SWB_Base.Slider.Value">
+            <summary>
+            The actual value. Setting the value will snap and clamp it.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Slider.ScreenPosToValue(Vector2)">
+            <summary>
+            Convert a screen position to a value. The value is clamped, but not snapped.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Slider.OnMouseMove(Sandbox.UI.MousePanelEvent)">
+            <summary>
+            If we move the mouse while we're being pressed then set the position,
+            but skip transitions.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Slider.OnMouseDown(Sandbox.UI.MousePanelEvent)">
+            <summary>
+            On mouse press jump to that position
+            </summary>
+        </member>
+        <member name="M:SWB_Base.Slider.UpdateSliderPositions">
+            <summary>
+            Updates the styles for TrackInner and Thumb to position us based on the current value.
+            Note this purposely uses percentages instead of pixels when setting up, this way we don't
+            have to worry about parent size, screen scale etc.
+            </summary>
+        </member>
+        <member name="T:SWB_Base.SliderEntry">
+            <summary>
+            A horizontal slider with a text entry on the right
+            </summary>
+        </member>
+        <member name="P:SWB_Base.SliderEntry.Value">
+            <summary>
+            The actual value. Setting the value will snap and clamp it.
+            </summary>
+        </member>
+        <member name="F:SWB_Base.InfiniteAmmoType.clip">
+            <summary>Infinite clip ammo, no need to reload</summary>
+        </member>
+        <member name="F:SWB_Base.InfiniteAmmoType.reserve">
+            <summary>Infinite reserve ammo, can always reload</summary>
+        </member>
+        <member name="F:SWB_Base.FiringType.semi">
+            <summary>Single fire</summary>
+        </member>
+        <member name="F:SWB_Base.FiringType.auto">
+            <summary>Automatic fire</summary>
+        </member>
+        <member name="F:SWB_Base.FiringType.burst">
+            <summary>3-Burst fire</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Ammo">
+            <summary>Amount of ammo in the clip</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.AmmoType">
+            <summary>Type of ammo</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.ClipSize">
+            <summary>Size of the clip</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Bullets">
+            <summary>Amount of bullets per shot</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.BulletSize">
+            <summary>Bullet size</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Damage">
+            <summary>Damage per bullet</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Force">
+            <summary>Bullet impact force</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Spread">
+            <summary>Weapon spread</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.Recoil">
+            <summary>Weapon recoil</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.RPM">
+            <summary>Rate Per Minute, firing speed (higher is faster)</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.FiringType">
+            <summary>Weapon firing type</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.ScreenShake">
+            <summary>Screenshake per shot</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.ShootAnim">
+            <summary>Animation used for shooting</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.ShootZoomedAnim">
+            <summary>Animation used for shooting while zoooming</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.DryFireSound">
+            <summary>Firing sound when clip is empty</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.ShootSound">
+            <summary>Firing sound</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.BulletEjectParticle">
+            <summary>Particle used for bullet ejection</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.MuzzleFlashParticle">
+            <summary>Particle used for the muzzle flash</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.BarrelSmokeParticle">
+            <summary>Particle used for the barrel smoke</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.BulletTracerParticle">
+            <summary>Particle used for the barrel smoke</summary>
+        </member>
+        <member name="P:SWB_Base.ClipInfo.InfiniteAmmo">
+            <summary>If the weapon should have infinite ammo</summary>
+        </member>
+        <member name="P:SWB_Base.ScreenShake.Length">
+            <summary>Duration length</summary>
+        </member>
+        <member name="P:SWB_Base.ScreenShake.Speed">
+            <summary>Shake speed</summary>
+        </member>
+        <member name="P:SWB_Base.ScreenShake.Size">
+            <summary>Screen disposition amount</summary>
+        </member>
+        <member name="P:SWB_Base.ScreenShake.Rotation">
+            <summary>Screen rotation amount</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowHealthIcon">
+            <summary>Show health icon</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowHealthCount">
+            <summary>Show health counter</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowAmmoCount">
+            <summary>Show ammo counter</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowFireMode">
+            <summary>Show active fire mode icon (semi/auto)</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowWeaponIcon">
+            <summary>Show weapon icon</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowCrosshair">
+            <summary>Show crosshair</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowCrosshairDot">
+            <summary>Show crosshair dot</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowCrosshairLines">
+            <summary>Show crosshair lines</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.ShowHitmarker">
+            <summary>Show hitmarker</summary>
+        </member>
+        <member name="P:SWB_Base.UISettings.PlayHitmarkerSound">
+            <summary>Play the hitmarker sound</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.DrawTime">
+            <summary>Duration of the draw animation</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.ReloadTime">
+            <summary>Duration of the reload animation</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.ReloadEmptyTime">
+            <summary>Duration of the empty reload animation (-1 to disable)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.BoltBackTime">
+            <summary>Duration of the boltback animation (-1 to disable)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.BoltBackEjectDelay">
+            <summary>Bullet eject delay during the boltback animation (-1 to disable)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.ReloadAnim">
+            <summary>Reloading animation</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.ReloadEmptyAnim">
+            <summary>Reloading animation when clip is empty</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.DrawAnim">
+            <summary>Draw animation</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.DrawEmptyAnim">
+            <summary>Draw animation when there is no ammo</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponInfo.BoltBackAnim">
+            <summary>Bolt pullback animation (usually a sniper)</summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.GetAttachmentCategory(System.String)">
+            <summary>
+            Finds an AttachmentCategory by name
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.GetAttachmentCategoryName(System.String)">
+            <summary>
+            Gets an AttachmentCategoryName from an attachment name
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.EquipAttachment(SWB_Base.ActiveAttachment)">
+            <summary>
+            Equips an attachment and assigns a valid attachment model to the activeAttachment.
+            Gets called by EquipAttachmentSV for both client and server.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.EquipAttachment(System.String)">
+            <summary>
+            Creates an ActiveAttachment and calls EquipAttachment.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.UnequipAttachment(System.String)">
+            <summary>
+            Unequips an attachment.
+            Gets called by EquipAttachmentSV for both client and server.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.EquipAttachmentCL(System.String)">
+            <summary>
+            Tries to equip attachment on client after server created a valid networked attachment
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.EquipAttachmentSV(System.String)">
+            <summary>
+            Request server to equip an attachment.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.UnequipAttachmentSV(System.String)">
+            <summary>
+            Request server to unequip an attachment.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.HandleAttachments(System.Boolean)">
+            <summary>
+            Handles forced and active attachments.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.CanAttack(SWB_Base.ClipInfo,Sandbox.TimeSince,Sandbox.InputButton)">
+            <summary>
+            Checks if the weapon can do the provided attack
+            </summary>
+            <param name="clipInfo">Attack information</param>
+            <param name="lastAttackTime">Time since this attack</param>
+            <param name="inputButton">The input button for this attack</param>
+            <returns></returns>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.CanPrimaryAttack">
+            <summary>
+            Checks if weapon can do the primary attack
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.CanSecondaryAttack">
+            <summary>
+            Checks if weapon can do the secondary attack
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.Attack(SWB_Base.ClipInfo,System.Boolean)">
+            <summary>
+            Shoot the weapon
+            </summary>
+            <param name="clipInfo">Attack information</param>
+            <param name="isPrimary">If this is the primary attack</param>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.AsyncAttack(SWB_Base.ClipInfo,System.Boolean,System.Single)">
+            <summary>
+            Shoot the weapon with a delay
+            </summary>
+            <param name="clipInfo">Attack information</param>
+            <param name="isPrimary">If this is the primary attack</param>
+            <param name="delay">Bullet firing delay</param>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.AttackPrimary">
+            <summary>
+            Do the primary attack
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.AttackSecondary">
+            <summary>
+            Do the secondary attack
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.TraceBullet(Vector3,Vector3,System.Single)">
+            <summary>
+            Does a trace from start to end, does bullet impact effects. Coded as an IEnumerable so you can return multiple
+            hits, like if you're going through layers or ricocet'ing or something.
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.ShootBullet(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Shoot a single bullet (server only)
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.ShootClientBullet(Vector3,Vector3,System.Single)">
+            <summary>
+            Shoot a single bullet (client only)
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.AsyncBoltBack(System.Single,System.String,System.Single,System.Single,System.String,System.Boolean)">
+            <summary>
+            Plays the bolt back animation
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.GetMuzzleEffectData(Sandbox.ModelEntity)">
+            <summary>
+            Gets the data on where to show the muzzle effect
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.ShootEffects(System.String,System.String,System.String)">
+            <summary>
+            Shows shooting effects
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.TracerEffects(System.String,Vector3)">
+            <summary>
+            Shows tracer effects
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.SendWeaponSound(System.String)">
+            <summary>
+            Plays a sound on the client
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.SendWeaponAnim(System.String,System.Boolean)">
+            <summary>
+            Plays a weapon animation on the client
+            </summary>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.GetShootAnimation(SWB_Base.ClipInfo)">
+            <summary>
+            Gets the correct shoot animation
+            </summary>
+            <param name="clipInfo">Info used for the current attack</param>
+            <returns></returns>
+        </member>
+        <member name="M:SWB_Base.WeaponBase.GetSetting``1(System.String,``0)">
+            <summary>
+            Gets a console variable and returns it with a specific type
+            </summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.Bucket">
+            <summary>Inventory slot position</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.BucketWeight">
+            <summary>Inventory slot position weight (higher = more important)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.CanDrop">
+            <summary>Can manually drop weapon</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.DropWeaponOnDeath">
+            <summary>Drop the weapon on death</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.BulletCocking">
+            <summary>Can bullets be cocked in the barrel? (clip ammo + 1)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.BarrelSmoking">
+            <summary>Should the barrel smoke after heavy weapon usage?</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.FreezeViewModelOnZoom">
+            <summary>Some weapons have looping idle animations -> force spam another animation to "freeze" it</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.FOV">
+            <summary>Default FOV</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.ZoomFOV">
+            <summary>FOV while zooming</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TuckRange">
+            <summary>Range that tucking should be enabled (-1 to disable tucking)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.HoldType">
+            <summary>How the player holds the weapon in thirdperson</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.HandsModelPath">
+            <summary>Path to the hands model (will be bonemerged with viewmodel, leave empty to disable)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.ViewModelPath">
+            <summary>Path to the view model</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.ViewModelOffset">
+            <summary>Offset the viewmodel with an angle (not available in ModelDoc)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.WorldModelPath">
+            <summary>Path to the world model</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.Icon">
+            <summary>Path to an image that represent the weapon on the HUD</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.WalkAnimationSpeedMod">
+            <summary>Procedural animation speed (lower is slower)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.AimSensitivity">
+            <summary>Aim sensitivity while zooming (lower is slower)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.PrimaryDelay">
+            <summary>Delay before firing when the primary attack button is pressed</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.SecondaryDelay">
+            <summary>Delay before firing when the secondary attack button is pressed</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.PrintName">
+            <summary>Display name</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.AnimatedActions">
+            <summary>Extra actions that use certain key combinations to trigger animations</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.AttachmentCategories">
+            <summary>List of all weapon attachments</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.ZoomAnimData">
+            <summary>Data used for setting the weapon to its zoom position</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.RunAnimData">
+            <summary>Data used for setting the weapon to its run position</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.CustomizeAnimData">
+            <summary>Data used for setting the weapon to its customization position</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.UISettings">
+            <summary>Weapon UI settings</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.General">
+            <summary>General data</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.Primary">
+            <summary>Primary attack data</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.Secondary">
+            <summary>Secondary attack data (setting this will disable weapon zooming)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TimeSincePrimaryAttack">
+            <summary>Time since the last primary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TimeSinceSecondaryAttack">
+            <summary>Time since the last secondary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TimeSinceReload">
+            <summary>Time since the last reload</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TimeSinceDeployed">
+            <summary>Time since deployment</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.TimeSinceActiveStart">
+            <summary>Time since added to inventory</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsReloading">
+            <summary>If the weapon is being reloaded</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsZooming">
+            <summary>If the weapon is being zoomed</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsScoped">
+            <summary>If the weapon is being scope</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsRunning">
+            <summary>If the weapon is being ran with</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsCustomizing">
+            <summary>If the weapon is being customized (client only)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.IsAnimating">
+            <summary>If the weapon is being animated (AnimatedActions)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.InBoltBack">
+            <summary>If the weapon is being bolt backed</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.InstanceID">
+            <summary>Instance ID</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.PickupTrigger">
+            <summary>Pickup trigger</summary>
+        </member>
+        <member name="F:SWB_Base.WeaponBase.HandsModel">
+            <summary>Model of the hands</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBase.InitialStats">
+            <summary>Initial stats (not actual)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingAnimationHit">
+            <summary>Animation to play for the primary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingAnimationMiss">
+            <summary>Animation to play when missing the primary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabAnimationHit">
+            <summary>Animation to play for the secondary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabAnimationMiss">
+            <summary>Animation to play when missing the secondary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingSound">
+            <summary>Sound to play for the primary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabSound">
+            <summary>Sound to play for the secondary attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.MissSound">
+            <summary>Sound to play when missing an attack</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.HitWorldSound">
+            <summary>Sound to play when hitting the world</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingSpeed">
+            <summary>Primary attack speed (lower is faster)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabSpeed">
+            <summary>Secondary attack speed (lower is faster)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingDamage">
+            <summary>Primary attack damage</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabDamage">
+            <summary>Secondary attack damage</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.SwingForce">
+            <summary>Primary attack force</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.StabForce">
+            <summary>Secondary attack force</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.DamageDistance">
+            <summary>Attack range</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseMelee.ImpactSize">
+            <summary>Attack impact size</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseShotty.ShellReloadTimeStart">
+            <summary>Duration of the reload start animation</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseShotty.ShellReloadTimeInsert">
+            <summary>Duration of the reload insert animatio</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseShotty.ShellEjectDelay">
+            <summary>The shell eject delay after firing</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseShotty.ReloadFinishAnim">
+            <summary>Animation for finishing the reload</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseShotty.CanShootDuringReload">
+            <summary>Can the shotgun shoot while reloading</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.LensTexture">
+            <summary>Path to the lens texture</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.ScopeTexture">
+            <summary>Path to the scope texture</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.ZoomInSound">
+            <summary>Sound to play when zooming in</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.ZoomOutSound">
+            <summary>Sound to play when zooming out</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.ZoomAmount">
+            <summary>The amount to zoom in (lower is more)</summary>
+        </member>
+        <member name="P:SWB_Base.WeaponBaseSniper.UseRenderTarget">
+            <summary>EXPERIMENTAL - Use a render target instead of a full screen texture zoom</summary>
+        </member>
+        <member name="T:InventoryBar">
+            <summary>
+            The main inventory panel, top left of the screen.
+            </summary>
+        </member>
+        <member name="M:InventoryBar.ProcessClientInput(Sandbox.InputBuilder)">
+            <summary>
+            IClientInput implementation, calls during the client input build.
+            You can both read and write to input, to affect what happens down the line.
+            </summary>
+        </member>
+        <member name="M:PickupFeed.OnPickup(System.String)">
+            <summary>
+            An RPC which can be called from the server 
+            </summary>
+        </member>
+        <member name="M:PickupFeed.AddEntry(System.String)">
+            <summary>
+            Spawns a label, waits for half a second and then deletes it
+            The :outro style in the scss keeps it alive and fades it out
+            </summary>
+        </member>
+        <member name="M:Weapon.ShootBullet(Vector3,Vector3,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Shoot a single bullet
+            </summary>
+        </member>
+        <member name="M:Weapon.ShootBullet(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Shoot a single bullet from owners view point
+            </summary>
+        </member>
+        <member name="M:Weapon.ShootBullets(System.Int32,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Shoot a multiple bullets from owners view point
+            </summary>
+        </member>
+    </members>
+</doc>

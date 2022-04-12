@@ -80,7 +80,7 @@ namespace OpWalrus
 			JBPlayer warden = game.curWarden;
 			if(warden != null)
 			{
-				currentWardenIndicator.SetText( "Current Warden: " + warden.GetClientOwner().Name + (game.spectators.Contains(warden) ? " (Dead)" : "") );
+				currentWardenIndicator.SetText( "Current Warden: " + warden.Client.Name + (game.spectators.Contains(warden) ? " (Dead)" : "") );
 			}
 			else
 			{
@@ -91,7 +91,7 @@ namespace OpWalrus
 
 			for(int i = 0; i < game.speakingList.Count; i++ )
 			{
-				talking += game.speakingList[i].GetClientOwner().Name;
+				talking += game.speakingList[i].Client.Name;
 				if( i != game.speakingList.Count - 1)
 				{
 					talking += ", ";
@@ -101,13 +101,13 @@ namespace OpWalrus
 
 			
 			JBPlayer localPlayer = (JBPlayer)Local.Pawn;
-			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Camera);
-			TraceResult tr = Trace.Ray( localCamera.Pos, localCamera.Pos + (localCamera.Rot.Forward * 2048) ).Ignore( localPlayer ).Run();
+			FirstPersonCamera localCamera = ((FirstPersonCamera)localPlayer.Components.Get<CameraMode>());
+			TraceResult tr = Trace.Ray( localCamera.Position, localCamera.Position + (localCamera.Rotation.Forward * 2048) ).Ignore( localPlayer ).Run();
 			string lookingAtText = "Looking at: ";
 			
 			if(tr.Entity != null && tr.Entity is JBPlayer otherPlayer)
 			{
-				lookingAtText += otherPlayer.GetClientOwner().Name;
+				lookingAtText += otherPlayer.Client.Name;
 			}
 			youAreLookingAtIndicator.SetText( lookingAtText );
 		}

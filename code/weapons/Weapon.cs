@@ -42,7 +42,7 @@ public partial class Weapon : BaseWeapon, IUse
 		TimeSinceReload = 0;
 		IsReloading = true;
 
-		(Owner as AnimEntity)?.SetAnimBool( "b_reload", true );
+		//(Owner as AnimEntity)?.SetAnimBool( "b_reload", true );
 
 		StartReloadEffects();
 	}
@@ -71,7 +71,7 @@ public partial class Weapon : BaseWeapon, IUse
 	[ClientRpc]
 	public virtual void StartReloadEffects()
 	{
-		ViewModelEntity?.SetAnimBool( "reload", true );
+		//ViewModelEntity?.SetAnimBool( "reload", true );
 
 		// TODO - player third person model reload
 	}
@@ -110,17 +110,22 @@ public partial class Weapon : BaseWeapon, IUse
 	{
 		if ( Owner != null ) return false;
 
-		if ( user.Inventory is Inventory inventory )
+		if(user is Player)
 		{
-			return inventory.CanAdd( this );
+			if ( ((Player)user).Inventory is Inventory inventory )
+			{
+				return inventory.CanAdd( this );
+			}
 		}
+
+		
 
 		return true;
 	}
 
 	public void Remove()
 	{
-		PhysicsGroup?.Wake();
+		//PhysicsGroup?.Wake();
 		Delete();
 	}
 
@@ -136,7 +141,7 @@ public partial class Weapon : BaseWeapon, IUse
 			_ = new Sandbox.ScreenShake.Perlin();
 		}
 
-		ViewModelEntity?.SetAnimBool( "fire", true );
+		//ViewModelEntity?.SetAnimBool( "fire", true );
 		CrosshairPanel?.CreateEvent( "fire" );
 	}
 
@@ -165,7 +170,7 @@ public partial class Weapon : BaseWeapon, IUse
 			//
 			using ( Prediction.Off() )
 			{
-				var damageInfo = DamageInfo.FromBullet( tr.EndPos, forward * 100 * force, damage )
+				var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 100 * force, damage )
 					.UsingTraceResult( tr )
 					.WithAttacker( Owner )
 					.WithWeapon( this );
@@ -180,7 +185,7 @@ public partial class Weapon : BaseWeapon, IUse
 	/// </summary>
 	public virtual void ShootBullet( float spread, float force, float damage, float bulletSize )
 	{
-		ShootBullet( Owner.EyePos, Owner.EyeRot.Forward, spread, force, damage, bulletSize );
+		ShootBullet( Owner.EyePosition, Owner.EyeRotation.Forward, spread, force, damage, bulletSize );
 	}
 
 	/// <summary>
@@ -188,8 +193,8 @@ public partial class Weapon : BaseWeapon, IUse
 	/// </summary>
 	public virtual void ShootBullets( int numBullets, float spread, float force, float damage, float bulletSize )
 	{
-		var pos = Owner.EyePos;
-		var dir = Owner.EyeRot.Forward;
+		var pos = Owner.EyePosition;
+		var dir = Owner.EyeRotation.Forward;
 
 		for ( int i = 0; i < numBullets; i++ )
 		{

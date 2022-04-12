@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandbox.UI;
+using SWB_Base.UI;
 
 /* 
  * Weapon base for sniper based zooming
@@ -9,12 +10,23 @@ namespace SWB_Base
 {
     public partial class WeaponBaseSniper : WeaponBase
     {
-        public virtual string LensTexture => "/materials/swb/scopes/swb_lens_hunter.png"; // Path to the lens texture
-        public virtual string ScopeTexture => "/materials/swb/scopes/swb_scope_hunter.png"; // Path to the scope texture
-        public virtual string ZoomInSound => "swb_sniper.zoom_in"; // Sound to play when zooming in
-        public virtual string ZoomOutSound => ""; // Sound to play when zooming out
-        public virtual float ZoomAmount => 20f; // The amount to zoom in ( lower is more )
-        public virtual bool UseRenderTarget => false; // EXPERIMENTAL - Use a render target instead of a full screen texture zoom
+        /// <summary>Path to the lens texture</summary>
+        public virtual string LensTexture => "/materials/swb/scopes/swb_lens_hunter.png";
+
+        /// <summary>Path to the scope texture</summary>
+        public virtual string ScopeTexture => "/materials/swb/scopes/swb_scope_hunter.png";
+
+        /// <summary>Sound to play when zooming in</summary>
+        public virtual string ZoomInSound => "swb_sniper.zoom_in";
+
+        /// <summary>Sound to play when zooming out</summary>
+        public virtual string ZoomOutSound => "";
+
+        /// <summary>The amount to zoom in (lower is more)</summary>
+        public virtual float ZoomAmount => 20f;
+
+        /// <summary>EXPERIMENTAL - Use a render target instead of a full screen texture zoom</summary>
+        public virtual bool UseRenderTarget => false;
 
         private Panel SniperScopePanel;
         private bool switchBackToThirdP = false;
@@ -41,19 +53,25 @@ namespace SWB_Base
                 oldSpread = Primary.Spread;
 
             Primary.Spread = 0;
-
             if (IsServer)
             {
-                if (Owner.Camera is ThirdPersonCamera)
+                var player = Owner as PlayerBase;
+
+                if (player.CameraMode is ThirdPersonCamera)
                 {
                     switchBackToThirdP = true;
-                    Owner.Camera = new FirstPersonCamera();
+                    player.CameraMode = new FirstPersonCamera();
                 }
             }
 
             if (IsLocalPawn)
             {
                 ViewModelEntity.RenderColor = Color.Transparent;
+
+                foreach (var child in ViewModelEntity.Children)
+                {
+                    (child as ModelEntity).RenderColor = Color.Transparent;
+                }
 
                 if (HandsModel != null)
                 {
@@ -73,13 +91,20 @@ namespace SWB_Base
 
             if (IsServer && switchBackToThirdP)
             {
+                var player = Owner as PlayerBase;
+
                 switchBackToThirdP = false;
-                Owner.Camera = new ThirdPersonCamera();
+                player.CameraMode = new ThirdPersonCamera();
             }
 
             if (IsLocalPawn)
             {
                 ViewModelEntity.RenderColor = Color.White;
+
+                foreach (var child in ViewModelEntity.Children)
+                {
+                    (child as ModelEntity).RenderColor = Color.White;
+                }
 
                 if (HandsModel != null)
                 {

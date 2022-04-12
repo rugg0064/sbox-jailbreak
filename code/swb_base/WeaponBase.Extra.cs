@@ -17,8 +17,8 @@ namespace SWB_Base
             var player = Owner as Player;
             if (player == null) return -1;
 
-            var pos = player.EyePos;
-            var forward = Owner.EyeRot.Forward;
+            var pos = player.EyePosition;
+            var forward = Owner.EyeRotation.Forward;
             var trace = Trace.Ray(pos, pos + forward * TuckRange)
                 .Ignore(this)
                 .Ignore(player)
@@ -61,5 +61,15 @@ namespace SWB_Base
             }
         }
 
+        // Burst Fire
+        public virtual void ResetBurstFireCount(ClipInfo clipInfo, InputButton inputButton)
+        {
+            if (clipInfo == null || clipInfo.FiringType != FiringType.burst) return;
+
+            if (Input.Released(inputButton))
+            {
+                burstCount = 0;
+            }
+        }
     }
 }

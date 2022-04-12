@@ -1,5 +1,7 @@
-﻿using Sandbox;
+﻿using System.Collections.Generic;
+using Sandbox;
 using SWB_Base;
+using SWB_Base.Attachments;
 
 namespace SWB_WEAPONS
 {
@@ -13,7 +15,7 @@ namespace SWB_WEAPONS
         public override string WorldModelPath => "weapons/swb/shotguns/spas/w_spas12.vmdl";
         public override string Icon => "/swb_weapons/textures/spas12.png";
         public override int FOV => 75;
-        public override int ZoomFOV => 45;
+        public override int ZoomFOV => 75;
         public override float WalkAnimationSpeedMod => 0.9f;
 
         public override float ShellReloadTimeStart => 0.4f;
@@ -65,6 +67,113 @@ namespace SWB_WEAPONS
                 Pos = new Vector3(10, -2, 0)
             };
 
+            CustomizeAnimData = new AngPos
+            {
+                Angle = new Angles(-2.25f, 51.84f, 0f),
+                Pos = new Vector3(11.22f, -4.96f, 1.078f)
+            };
+
+            // Attachments //
+            AttachmentCategories = new List<AttachmentCategory>()
+            {
+                new AttachmentCategory
+                {
+                    Name = AttachmentCategoryName.Muzzle,
+                    BoneOrAttachment = "muzzle",
+                    Attachments = new List<AttachmentBase>()
+                    {
+                        new ShotgunSilencer
+                        {
+                            MuzzleFlashParticle = "particles/swb/muzzle/flash_medium_silenced.vpcf",
+                            ShootSound = "swb_shotgun.silenced.fire",
+                            ViewParentBone = "shotgun",
+                            ViewTransform = new Transform {
+                                Position = new Vector3(0.004f, 3.4f, 36.623f),
+                                Rotation = Rotation.From(new Angles(90f, 0f, -90f)),
+                                Scale = 12f
+                            },
+                            WorldParentBone = "shotgun",
+                            WorldTransform = new Transform {
+                                Position = new Vector3(-0.011f, 3.4f, 36.616f),
+                                Rotation = Rotation.From(new Angles(90f, 0f, -90f)),
+                                Scale = 12f
+                            },
+                        }
+                    }
+                },
+                new AttachmentCategory
+                {
+                    Name = AttachmentCategoryName.Tactical,
+                    BoneOrAttachment = "",
+                    Attachments = new List<AttachmentBase>()
+                    {
+                        new SmallLaserRed
+                        {
+                            Color = Color.Red,
+                            ViewParentBone = "shotgun",
+                            ViewTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                            WorldParentBone = "shotgun",
+                            WorldTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                        },
+                        new SmallLaserBlue
+                        {
+                            Color = Color.Blue,
+                            ViewParentBone = "shotgun",
+                            ViewTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                            WorldParentBone = "shotgun",
+                            WorldTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                        },
+                        new SmallLaserGreen
+                        {
+                            Color = Color.Green,
+                            ViewParentBone = "shotgun",
+                            ViewTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                            WorldParentBone = "shotgun",
+                            WorldTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                        },
+                        new SmallLaserRainbow
+                        {
+                            RainbowColor = true,
+                            ViewParentBone = "shotgun",
+                            ViewTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                            WorldParentBone = "shotgun",
+                            WorldTransform = new Transform {
+                                Position = new Vector3(0f, 1.5f, 31.2f),
+                                Rotation = Rotation.From(new Angles(-90f, 0f, 180f)),
+                                Scale = 5.269f
+                            },
+                        },
+                    }
+                }
+            };
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Sandbox;
+﻿using System;
+using Sandbox;
 using Sandbox.UI;
 
 /* 
@@ -35,13 +36,13 @@ namespace SWB_Base
             // Draw animation
             if (IsLocalPawn)
             {
-                if (Primary.Ammo == 0 && !string.IsNullOrEmpty(Primary.DrawEmptyAnim))
+                if (Primary.Ammo == 0 && !string.IsNullOrEmpty(General.DrawEmptyAnim))
                 {
-                    ViewModelEntity?.SetAnimBool(Primary.DrawEmptyAnim, true);
+                    ViewModelEntity?.SetAnimParameter(General.DrawEmptyAnim, true);
                 }
-                else if (!string.IsNullOrEmpty(Primary.DrawAnim))
+                else if (!string.IsNullOrEmpty(General.DrawAnim))
                 {
-                    ViewModelEntity?.SetAnimBool(Primary.DrawAnim, true);
+                    ViewModelEntity?.SetAnimParameter(General.DrawAnim, true);
                 }
             }
 
@@ -56,15 +57,32 @@ namespace SWB_Base
             }
 
             // Check if boltback was not completed
-            if (IsServer && inBoltBack)
+            if (IsServer && InBoltBack)
             {
-                if (IsServer)
-                    _ = AsyncBoltBack(1, Primary.BoltBackAnim, Primary.BoltBackTime, Primary.BoltBackEjectDelay, Primary.BulletEjectParticle, true);
+                _ = AsyncBoltBack(General.DrawTime, General.BoltBackAnim, General.BoltBackTime, General.BoltBackEjectDelay, Primary.BulletEjectParticle, true);
             }
+
+            // Save initial values
+            if (InitialStats == null)
+            {
+                InitialStats = new StatModifier
+                {
+                    Damage = Primary.Damage,
+                    Recoil = Primary.Recoil,
+                    Spread = Primary.Spread,
+                    RPM = Primary.RPM,
+                };
+            }
+
+            // Attachments
+            HandleAttachments(true);
         }
 
         public override void ActiveEnd(Entity ent, bool dropped)
         {
+            // Attachments
+            HandleAttachments(false);
+
             base.ActiveEnd(ent, dropped);
         }
 
@@ -82,8 +100,11 @@ namespace SWB_Base
 
             if (CanPrimaryAttack())
             {
-                TimeSincePrimaryAttack = 0;
-                AttackPrimary();
+                using (LagCompensation())
+                {
+                    TimeSincePrimaryAttack = 0;
+                    AttackPrimary();
+                }
             }
 
             // AttackPrimary could have deleted us
@@ -92,14 +113,16 @@ namespace SWB_Base
 
             if (CanSecondaryAttack())
             {
-                TimeSinceSecondaryAttack = 0;
-                AttackSecondary();
+                using (LagCompensation())
+                {
+                    TimeSinceSecondaryAttack = 0;
+                    AttackSecondary();
+                }
             }
         }
 
-        public override void Simulate(Client owner)
+        public override void Simulate(Client player)
         {
-
             if (IsAnimating) return;
 
             // Handle custom animation actions
@@ -107,17 +130,17 @@ namespace SWB_Base
             {
                 for (int i = 0; i < AnimatedActions.Count; i++)
                 {
-                    if (AnimatedActions[i].Handle(owner, this))
+                    if (AnimatedActions[i].Handle(player, this))
                         return;
                 }
             }
 
-            IsRunning = Input.Down(InputButton.Run) && RunAnimData != null && Owner.Velocity.Length >= 200;
+            IsRunning = Input.Down(InputButton.Run) && RunAnimData != AngPos.Zero && Owner.Velocity.Length >= 200;
 
-            if (Secondary == null && ZoomAnimData != null && !(this is WeaponBaseMelee))
+            if (Secondary == null && ZoomAnimData != AngPos.Zero && this is not WeaponBaseMelee)
                 IsZooming = Input.Down(InputButton.Attack2) && !IsRunning && !IsReloading;
 
-            if (TimeSinceDeployed < 0.6f)
+            if (TimeSinceDeployed < General.DrawTime)
                 return;
 
             // Burst fire
@@ -126,28 +149,23 @@ namespace SWB_Base
 
             if (!IsReloading || this is WeaponBaseShotty)
             {
-                BaseSimulate(owner);
+                BaseSimulate(player);
             }
 
             if (IsReloading && TimeSinceReload >= 0)
             {
                 OnReloadFinish();
             }
-        }
 
-        public virtual void ResetBurstFireCount(ClipInfo clipInfo, InputButton inputButton)
-        {
-            if (clipInfo == null || clipInfo.FiringType != FiringType.burst) return;
-
-            if (Input.Released(inputButton))
+            if (IsClient)
             {
-                burstCount = 0;
+                UISimulate(player);
             }
         }
 
         public virtual void Reload()
         {
-            if (IsReloading || IsAnimating || inBoltBack || IsShooting())
+            if (IsReloading || IsAnimating || InBoltBack || IsShooting())
                 return;
 
             var maxClipSize = BulletCocking ? Primary.ClipSize + 1 : Primary.ClipSize;
@@ -155,15 +173,15 @@ namespace SWB_Base
             if (Primary.Ammo >= maxClipSize || Primary.ClipSize == -1)
                 return;
 
-            var isEmptyReload = Primary.ReloadEmptyTime > 0 ? Primary.Ammo == 0 : false;
-            TimeSinceReload = -(isEmptyReload ? Primary.ReloadEmptyTime : Primary.ReloadTime);
+            var isEmptyReload = General.ReloadEmptyTime > 0 && Primary.Ammo == 0;
+            TimeSinceReload = -(isEmptyReload ? General.ReloadEmptyTime : General.ReloadTime);
 
-            if (!isEmptyReload && Primary.Ammo == 0 && Primary.BoltBackTime > -1)
+            if (!isEmptyReload && Primary.Ammo == 0 && General.BoltBackTime > -1)
             {
-                TimeSinceReload -= Primary.BoltBackTime;
+                TimeSinceReload -= General.BoltBackTime;
 
                 if (IsServer)
-                    _ = AsyncBoltBack(Primary.ReloadTime, Primary.BoltBackAnim, Primary.BoltBackTime, Primary.BoltBackEjectDelay, Primary.BulletEjectParticle);
+                    _ = AsyncBoltBack(General.ReloadTime, General.BoltBackAnim, General.BoltBackTime, General.BoltBackEjectDelay, Primary.BulletEjectParticle);
             }
 
             if (Owner is PlayerBase player)
@@ -175,7 +193,7 @@ namespace SWB_Base
             IsReloading = true;
 
             // Player anim
-            (Owner as AnimEntity).SetAnimBool("b_reload", true);
+            (Owner as AnimEntity).SetAnimParameter("b_reload", true);
 
             StartReloadEffects(isEmptyReload);
         }
@@ -183,21 +201,18 @@ namespace SWB_Base
         public virtual void OnReloadFinish()
         {
             IsReloading = false;
+            var maxClipSize = BulletCocking && Primary.Ammo > 0 ? Primary.ClipSize + 1 : Primary.ClipSize;
 
             if (Primary.InfiniteAmmo == InfiniteAmmoType.reserve)
             {
-                var newAmmo = Primary.ClipSize;
-
-                if (BulletCocking && Primary.Ammo > 0)
-                    newAmmo += 1;
-
-                Primary.Ammo = newAmmo;
+                Primary.Ammo = maxClipSize;
                 return;
             }
 
             if (Owner is PlayerBase player)
             {
-                var ammo = player.TakeAmmo(Primary.AmmoType, Primary.ClipSize - Primary.Ammo);
+                var ammo = player.TakeAmmo(Primary.AmmoType, maxClipSize - Primary.Ammo);
+
                 if (ammo == 0)
                     return;
 
@@ -210,15 +225,15 @@ namespace SWB_Base
         {
             if (reloadAnim != null)
             {
-                ViewModelEntity?.SetAnimBool(reloadAnim, true);
+                ViewModelEntity?.SetAnimParameter(reloadAnim, true);
             }
-            else if (isEmpty && Primary.ReloadEmptyAnim != null)
+            else if (isEmpty && General.ReloadEmptyAnim != null)
             {
-                ViewModelEntity?.SetAnimBool(Primary.ReloadEmptyAnim, true);
+                ViewModelEntity?.SetAnimParameter(General.ReloadEmptyAnim, true);
             }
-            else if (Primary.ReloadAnim != null)
+            else if (General.ReloadAnim != null)
             {
-                ViewModelEntity?.SetAnimBool(Primary.ReloadAnim, true);
+                ViewModelEntity?.SetAnimParameter(General.ReloadAnim, true);
             }
 
             // TODO - player third person model reload
@@ -236,6 +251,8 @@ namespace SWB_Base
             if (doRecoil)
             {
                 doRecoil = false;
+                //var random = new Random(); -> might making aiming too difficult
+                //var randVal = random.Next(-5, 5) / 10f;
                 var recoilAngles = new Angles(IsZooming ? -Primary.Recoil * 0.4f : -Primary.Recoil, 0, 0);
                 input.ViewAngles += recoilAngles;
             }
@@ -264,60 +281,6 @@ namespace SWB_Base
             }
         }
 
-        public virtual ModelEntity GetEffectModel()
-        {
-            ModelEntity effectModel = ViewModelEntity;
-
-            // We don't want to change the world effect origin if we or others can see it
-            if ((IsLocalPawn && !Owner.IsFirstPersonMode) || !IsLocalPawn)
-            {
-                effectModel = EffectEntity;
-            }
-
-            return effectModel;
-        }
-
-        // Pass the active child from before the delay
-        protected bool IsAsyncValid(Entity activeChild, int instanceID)
-        {
-            return Owner != null && activeChild == Owner.ActiveChild && instanceID == InstanceID;
-        }
-
-        protected bool IsShooting()
-        {
-            if (Secondary == null)
-                return GetRealRPM(Primary.RPM) > TimeSincePrimaryAttack;
-
-            return GetRealRPM(Primary.RPM) > TimeSincePrimaryAttack || GetRealRPM(Secondary.RPM) > TimeSinceSecondaryAttack;
-        }
-
-        protected float GetRealRPM(int rpm)
-        {
-            return (60f / rpm);
-        }
-
-        public virtual float GetRealSpread(float baseSpread = -1)
-        {
-            if (!Owner.IsValid()) return 0;
-
-            float spread = baseSpread != -1 ? baseSpread : Primary.Spread;
-            float floatMod = 1f;
-
-            // Ducking
-            if (Input.Down(InputButton.Duck) && !IsZooming)
-                floatMod -= 0.25f;
-
-            // Aiming
-            if (IsZooming && this is not WeaponBaseShotty)
-                floatMod /= 4;
-
-            // Jumping
-            if (Owner.GroundEntity == null)
-                floatMod += 0.5f;
-
-            return spread * floatMod;
-        }
-
         public bool TakeAmmo(int amount)
         {
             if (Primary.InfiniteAmmo == InfiniteAmmoType.clip)
@@ -339,26 +302,10 @@ namespace SWB_Base
             return true;
         }
 
-        public int AvailableAmmo()
-        {
-            var owner = Owner as PlayerBase;
-            if (owner == null) return 0;
-
-            // Show clipsize as the available ammo
-            if (Primary.InfiniteAmmo == InfiniteAmmoType.reserve)
-                return Primary.ClipSize;
-
-            return owner.AmmoCount(Primary.AmmoType);
-        }
-
-        public bool IsUsable()
-        {
-            if (Primary.Ammo > 0) return true;
-            return AvailableAmmo() > 0;
-        }
-
         public override void OnCarryStart(Entity carrier)
         {
+            TimeSinceActiveStart = 0;
+
             base.OnCarryStart(carrier);
 
             if (PickupTrigger.IsValid())
@@ -377,6 +324,16 @@ namespace SWB_Base
 
             base.OnCarryDrop(dropper);
 
+            if (IsServer)
+            {
+                // Reattach attachments (they get removed in ActiveEnd) [TEMP]
+                foreach (var activeAttach in ActiveAttachments)
+                {
+                    var attach = GetAttachment(activeAttach.Name);
+                    attach.CreateModel(this);
+                }
+            }
+
             if (PickupTrigger.IsValid())
             {
                 PickupTrigger.EnableTouch = true;
@@ -385,14 +342,28 @@ namespace SWB_Base
 
         public override void SimulateAnimator(PawnAnimator anim)
         {
-            anim.SetParam("holdtype", (int)HoldType);
-            anim.SetParam("aimat_weight", 1.0f);
+            anim.SetAnimParameter("holdtype", (int)HoldType);
+            anim.SetAnimParameter("aim_body_weight", 1.0f);
         }
 
+        /// <summary>
+        /// Plays a sound on the client
+        /// </summary>
+        [ClientRpc]
+        public virtual void SendWeaponSound(string sound)
+        {
+            if (!string.IsNullOrEmpty(sound))
+                PlaySound(sound);
+        }
+
+        /// <summary>
+        /// Plays a weapon animation on the client
+        /// </summary>
         [ClientRpc]
         public virtual void SendWeaponAnim(string anim, bool value = true)
         {
-            ViewModelEntity?.SetAnimBool(anim, value);
+            if (!string.IsNullOrEmpty(anim))
+                ViewModelEntity?.SetAnimParameter(anim, value);
         }
     }
 }

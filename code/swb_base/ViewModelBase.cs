@@ -1,9 +1,10 @@
 ﻿using System;
 using Sandbox;
+using SWB_Base.Attachments;
 
 namespace SWB_Base
 {
-    class ViewModelBase : BaseViewModel
+    partial class ViewModelBase : BaseViewModel
     {
         public AngPos editorOffset;
 
@@ -34,12 +35,12 @@ namespace SWB_Base
         public ViewModelBase(WeaponBase weapon)
         {
             this.weapon = weapon;
+            FinalFOV = weapon.FOV;
         }
 
         public override void PostCameraSetup(ref CameraSetup camSetup)
         {
             base.PostCameraSetup(ref camSetup);
-            FieldOfView = weapon.FOV;
             Rotation = camSetup.Rotation;
             Position = camSetup.Position;
             if (weapon.IsDormant) return;
@@ -58,7 +59,6 @@ namespace SWB_Base
             // Change the angles and positions of the viewmodel with the new vectors
             Rotation *= Rotation.From(FinalVectorRot.x, FinalVectorRot.y, FinalVectorRot.z);
             Position += FinalVectorPos.z * Rotation.Up + FinalVectorPos.y * Rotation.Forward + FinalVectorPos.x * Rotation.Right;
-            FieldOfView = FinalFOV;
 
             // I'm sure there's something already that does this for me, but I spend an hour
             // searching through the wiki and a bunch of other garbage and couldn't find anything...
@@ -71,9 +71,9 @@ namespace SWB_Base
             TargetFOV = weapon.FOV;
 
             // Model editor
-            if (Owner is PlayerBase player && player.IsModelEditing())
+            if (Owner is PlayerBase player && (player.IsModelEditing() || player.IsAttachmentEditing()))
             {
-                if (editorOffset != null)
+                if (editorOffset != AngPos.Zero)
                 {
                     TargetVectorRot += MathUtil.ToVector3(editorOffset.Angle);
                     TargetVectorPos += editorOffset.Pos;
@@ -83,7 +83,7 @@ namespace SWB_Base
 
             // Tucking
             float tuckDist;
-            if (weapon.RunAnimData != null && weapon.ShouldTuck(out tuckDist))
+            if (weapon.RunAnimData != AngPos.Zero && weapon.ShouldTuck(out tuckDist))
             {
                 var animationCompletion = Math.Min(1, ((weapon.TuckRange - tuckDist) / weapon.TuckRange) + 0.5f);
                 TargetVectorPos = weapon.RunAnimData.Pos * animationCompletion;
@@ -97,6 +97,7 @@ namespace SWB_Base
             HandleSwayAnimation(ref camSetup);
             HandleIronAnimation(ref camSetup);
             HandleSprintAnimation(ref camSetup);
+            HandleCustomizeAnimation(ref camSetup);
             HandleJumpAnimation(ref camSetup);
         }
 
@@ -151,14 +152,14 @@ namespace SWB_Base
             int swayspeed = 5;
 
             // Fix the sway faster if we're ironsighting
-            if (weapon.IsZooming && weapon.ZoomAnimData != null)
+            if (weapon.IsZooming && weapon.ZoomAnimData != AngPos.Zero)
                 swayspeed = 20;
 
             // Lerp the eye position
-            LastEyeRot = Rotation.Lerp(LastEyeRot, Owner.EyeRot, swayspeed * RealTime.Delta);
+            LastEyeRot = Rotation.Lerp(LastEyeRot, Owner.EyeRotation, swayspeed * RealTime.Delta);
 
             // Calculate the difference between our current eye angles and old (lerped) eye angles
-            Angles angDif = Owner.EyeRot.Angles() - LastEyeRot.Angles();
+            Angles angDif = Owner.EyeRotation.Angles() - LastEyeRot.Angles();
             angDif = new Angles(angDif.pitch, MathX.RadianToDegree(MathF.Atan2(MathF.Sin(MathX.DegreeToRadian(angDif.yaw)), MathF.Cos(MathX.DegreeToRadian(angDif.yaw)))), 0);
 
             // Perform sway
@@ -168,21 +169,30 @@ namespace SWB_Base
 
         private void HandleIronAnimation(ref CameraSetup camSetup)
         {
-            if (weapon.IsZooming && weapon.ZoomAnimData != null)
+            if (weapon.IsZooming && weapon.ZoomAnimData != AngPos.Zero)
             {
                 animSpeed = 10 * weapon.WalkAnimationSpeedMod;
                 TargetVectorPos += weapon.ZoomAnimData.Pos;
-                TargetVectorRot += new Vector3(weapon.ZoomAnimData.Angle.pitch, weapon.ZoomAnimData.Angle.yaw, weapon.ZoomAnimData.Angle.roll);
+                TargetVectorRot += MathUtil.ToVector3(weapon.ZoomAnimData.Angle);
                 TargetFOV = weapon.ZoomFOV;
             }
         }
 
         private void HandleSprintAnimation(ref CameraSetup camSetup)
         {
-            if (weapon.IsRunning && weapon.RunAnimData != null)
+            if (weapon.IsRunning && weapon.RunAnimData != AngPos.Zero && !weapon.IsCustomizing)
             {
                 TargetVectorPos += weapon.RunAnimData.Pos;
-                TargetVectorRot += new Vector3(weapon.RunAnimData.Angle.pitch, weapon.RunAnimData.Angle.yaw, weapon.RunAnimData.Angle.roll);
+                TargetVectorRot += MathUtil.ToVector3(weapon.RunAnimData.Angle);
+            }
+        }
+
+        private void HandleCustomizeAnimation(ref CameraSetup camSetup)
+        {
+            if (weapon.IsCustomizing && weapon.CustomizeAnimData != AngPos.Zero)
+            {
+                TargetVectorPos += weapon.CustomizeAnimData.Pos;
+                TargetVectorRot += MathUtil.ToVector3(weapon.CustomizeAnimData.Angle);
             }
         }
 

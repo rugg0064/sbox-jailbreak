@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandbox.UI;
+using SWB_Base.Editor;
 
 namespace SWB_Base
 {
@@ -7,30 +8,47 @@ namespace SWB_Base
     {
         private Panel modelEditor;
 
-        // Server only
         public void ToggleModelEditor()
         {
+            Host.AssertServer();
+
             ToggleModelEditorCL(To.Single(this));
         }
 
-        // Client only
         public bool IsModelEditing()
         {
+            Host.AssertClient();
+
             return modelEditor != null;
+        }
+
+        public void CloseModelEditor()
+        {
+            Host.AssertClient();
+
+            if (modelEditor != null)
+            {
+                modelEditor.Delete();
+                modelEditor = null;
+            }
         }
 
         [ClientRpc]
         public void ToggleModelEditorCL()
         {
+            Host.AssertClient();
+
+            CloseAttachmentEditor();
+
             if (!IsModelEditing())
             {
-                Log.Info("Opened editor!");
-                modelEditor = new EditorMenu();
+                Log.Info("Opened model editor!");
+                modelEditor = new ModelEditorMenu();
                 modelEditor.Parent = Local.Hud;
             }
             else
             {
-                Log.Info("Closed editor!");
+                Log.Info("Closed model editor!");
                 modelEditor.Delete(true);
                 modelEditor = null;
             }
